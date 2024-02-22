@@ -87,6 +87,7 @@ func Routers() *gin.Engine {
 	{
 		adminRouter := router.RouterGroupApp.Admin
 		adminRouter.InitStudentInfoRouter(PrivateGroup)
+		adminRouter.InitWxUserRouter(PrivateGroup)
 	}
 
 	global.GVA_LOG.Info("router register success")
