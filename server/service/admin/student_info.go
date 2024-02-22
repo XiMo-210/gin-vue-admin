@@ -86,8 +86,12 @@ func (studentInfoService *StudentInfoService) GetStudentInfoInfoList(info adminR
 	if info.Dormitory != "" {
 		db = db.Where("dormitory = ?", info.Dormitory)
 	}
-	if info.UserId != nil {
-		db = db.Where("user_id = ?", info.UserId)
+	if info.IsRegister != nil {
+		if *info.IsRegister == false {
+			db = db.Where("user_id = 0")
+		} else {
+			db = db.Where("user_id <> 0")
+		}
 	}
 	err = db.Count(&total).Error
 	if err != nil {

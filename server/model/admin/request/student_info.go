@@ -19,6 +19,6 @@ type StudentInfoSearch struct {
 	Major         string `json:"major" form:"major" `
 	Class         string `json:"class" form:"class" `
 	Dormitory     string `json:"dormitory" form:"dormitory" `
-	UserId        *int   `json:"userId" form:"userId" `
+	IsRegister    *bool  `json:"isRegister" form:"isRegister" `
 	request.PageInfo
 }
