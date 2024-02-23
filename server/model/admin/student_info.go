@@ -23,7 +23,7 @@ type StudentInfo struct {
 	Class             string     `json:"class" form:"class" gorm:"column:class;comment:;"binding:"required"`                                       //班级
 	Dormitory         string     `json:"dormitory" form:"dormitory" gorm:"column:dormitory;comment:;"binding:"required"`                           //寝室
 	Portrait          string     `json:"portrait" form:"portrait" gorm:"column:portrait;comment:;"binding:"required"`                              //人像
-	UserId            *int       `json:"userId" form:"userId" gorm:"column:user_id;comment:;"binding:"required"`                                   //用户ID
+	UserId            *int       `json:"userId" form:"userId" gorm:"column:user_id;comment:;default:0"binding:"required"`                          //用户ID
 }
 
 // TableName 学生信息 StudentInfo自定义表名 student_infos
