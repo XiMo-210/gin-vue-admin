@@ -222,6 +222,15 @@
             <el-button
               type="primary"
               link
+              class="table-button"
+              @click="getStudentInfoDetails(scope.row)"
+            >
+              <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
+              关联学生
+            </el-button>
+            <el-button
+              type="primary"
+              link
               icon="delete"
               @click="deleteRow(scope.row)"
             >删除</el-button>
@@ -243,7 +252,7 @@
 
     <el-dialog
       v-model="detailShow"
-      style="width: 600px"
+      style="width: 650px"
       lock-scroll
       :before-close="closeDetailShow"
       title="查看详情"
@@ -295,6 +304,50 @@
         </el-descriptions>
       </el-scrollbar>
     </el-dialog>
+
+    <el-dialog
+      v-model="studentInfoDetailShow"
+      style="width: 500px"
+      lock-scroll
+      :before-close="closeStudentInfoDetailShow"
+      title="关联学生"
+      destroy-on-close
+    >
+      <el-scrollbar height="380px">
+        <el-descriptions
+          column="1"
+          border
+        >
+          <el-descriptions-item label="姓名">
+            {{ studentInfoFormData.name }}
+          </el-descriptions-item>
+          <el-descriptions-item label="性别">
+            {{ studentInfoFormData.gender }}
+          </el-descriptions-item>
+          <el-descriptions-item label="入学年份">
+            {{ studentInfoFormData.admissionYear }}
+          </el-descriptions-item>
+          <el-descriptions-item label="校区">
+            {{ studentInfoFormData.campus }}
+          </el-descriptions-item>
+          <el-descriptions-item label="学号">
+            {{ studentInfoFormData.studentId }}
+          </el-descriptions-item>
+          <el-descriptions-item label="学院">
+            {{ studentInfoFormData.college }}
+          </el-descriptions-item>
+          <el-descriptions-item label="专业">
+            {{ studentInfoFormData.major }}
+          </el-descriptions-item>
+          <el-descriptions-item label="班级">
+            {{ studentInfoFormData.class }}
+          </el-descriptions-item>
+          <el-descriptions-item label="寝室">
+            {{ studentInfoFormData.dormitory }}
+          </el-descriptions-item>
+        </el-descriptions>
+      </el-scrollbar>
+    </el-dialog>
   </div>
 </template>
 
@@ -305,6 +358,9 @@ import {
   findWxUser,
   getWxUserList
 } from '@/api/wxUser'
+import {
+  findStudentInfo,
+} from '@/api/studentInfo'
 import { getUrl } from '@/utils/image'
 
 // 全量引入格式化工具 请按需保留
@@ -518,6 +574,65 @@ const closeDetailShow = () => {
     points: 0,
     isCompletedMain: false,
     curTask: 0,
+  }
+}
+
+const studentInfoFormData = ref({
+  name: '',
+  gender: '',
+  birthday: new Date(),
+  idCard: '',
+  admissionLetterId: '',
+  admissionYear: 0,
+  originPlace: '',
+  campus: '',
+  studentId: '',
+  college: '',
+  major: '',
+  class: '',
+  dormitory: '',
+  portrait: '',
+  userId: 0,
+  isRegister: false,
+})
+
+// 查看详情控制标记
+const studentInfoDetailShow = ref(false)
+
+// 打开详情弹窗
+const openStudentInfoDetailShow = () => {
+  studentInfoDetailShow.value = true
+}
+
+// 打开详情
+const getStudentInfoDetails = async(row) => {
+  // 打开弹窗
+  const res = await findStudentInfo({ ID: row.studentInfoId })
+  if (res.code === 0) {
+    studentInfoFormData.value = res.data.restudentInfo
+    openStudentInfoDetailShow()
+  }
+}
+
+// 关闭详情弹窗
+const closeStudentInfoDetailShow = () => {
+  studentInfoDetailShow.value = false
+  studentInfoFormData.value = {
+    name: '',
+    gender: '',
+    birthday: new Date(),
+    idCard: '',
+    admissionLetterId: '',
+    admissionYear: 0,
+    originPlace: '',
+    campus: '',
+    studentId: '',
+    college: '',
+    major: '',
+    class: '',
+    dormitory: '',
+    userId: 0,
+    isRegister: false,
   }
 }
 
