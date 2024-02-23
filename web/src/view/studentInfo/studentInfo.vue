@@ -216,6 +216,10 @@
             >删除</el-button>
           </template>
         </el-popover>
+        <ImportExcel
+          template-id="studentInfo"
+          @on-success="getTableData"
+        />
       </div>
       <el-table
         ref="multipleTable"
@@ -615,6 +619,9 @@ import SelectImage from '@/components/selectImage/selectImage.vue'
 import { formatDate, ReturnArrImg } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
+
+// 导入组件
+import ImportExcel from '@/components/exportExcel/importExcel.vue'
 
 defineOptions({
   name: 'StudentInfo'
