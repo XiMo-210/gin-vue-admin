@@ -93,59 +93,23 @@
           label="开始时间"
           prop="startTime"
         >
-          <template #label>
-            <span>
-              开始时间
-              <el-tooltip content="搜索范围是开始日期（包含）至结束日期（不包含）">
-                <el-icon><QuestionFilled /></el-icon>
-              </el-tooltip>
-            </span>
-          </template>
           <el-date-picker
-            v-model="searchInfo.startStartTime"
-            type="datetime"
-            placeholder="开始日期"
+            v-model="searchInfo.startTime"
+            type="date"
+            placeholder="请选择"
             style="width: 140px"
-            :disabled-date="time=> searchInfo.endStartTime ? time.getTime() > searchInfo.endStartTime.getTime() : false"
           />
-          —
-          <el-date-picker
-            v-model="searchInfo.endStartTime"
-            type="datetime"
-            placeholder="结束日期"
-            style="width: 140px"
-            :disabled-date="time=> searchInfo.startStartTime ? time.getTime() < searchInfo.startStartTime.getTime() : false"
-          />
-
         </el-form-item>
         <el-form-item
           label="结束时间"
           prop="endTime"
         >
-          <template #label>
-            <span>
-              结束时间
-              <el-tooltip content="搜索范围是开始日期（包含）至结束日期（不包含）">
-                <el-icon><QuestionFilled /></el-icon>
-              </el-tooltip>
-            </span>
-          </template>
           <el-date-picker
-            v-model="searchInfo.startEndTime"
-            type="datetime"
-            placeholder="开始日期"
+            v-model="searchInfo.endTime"
+            type="date"
+            placeholder="请选择"
             style="width: 140px"
-            :disabled-date="time=> searchInfo.endEndTime ? time.getTime() > searchInfo.endEndTime.getTime() : false"
           />
-          —
-          <el-date-picker
-            v-model="searchInfo.endEndTime"
-            type="datetime"
-            placeholder="结束日期"
-            style="width: 140px"
-            :disabled-date="time=> searchInfo.startEndTime ? time.getTime() < searchInfo.startEndTime.getTime() : false"
-          />
-
         </el-form-item>
         <el-form-item>
           <el-button
@@ -606,28 +570,6 @@ const searchRule = reactive({
       }
     }, trigger: 'change' }
   ],
-  startTime: [{ validator: (rule, value, callback) => {
-    if (searchInfo.value.startStartTime && !searchInfo.value.endStartTime) {
-      callback(new Error('请填写结束日期'))
-    } else if (!searchInfo.value.startStartTime && searchInfo.value.endStartTime) {
-      callback(new Error('请填写开始日期'))
-    } else if (searchInfo.value.startStartTime && searchInfo.value.endStartTime && (searchInfo.value.startStartTime.getTime() === searchInfo.value.endStartTime.getTime() || searchInfo.value.startStartTime.getTime() > searchInfo.value.endStartTime.getTime())) {
-      callback(new Error('开始日期应当早于结束日期'))
-    } else {
-      callback()
-    }
-  }, trigger: 'change' }],
-  endTime: [{ validator: (rule, value, callback) => {
-    if (searchInfo.value.startEndTime && !searchInfo.value.endEndTime) {
-      callback(new Error('请填写结束日期'))
-    } else if (!searchInfo.value.startEndTime && searchInfo.value.endEndTime) {
-      callback(new Error('请填写开始日期'))
-    } else if (searchInfo.value.startEndTime && searchInfo.value.endEndTime && (searchInfo.value.startEndTime.getTime() === searchInfo.value.endEndTime.getTime() || searchInfo.value.startEndTime.getTime() > searchInfo.value.endEndTime.getTime())) {
-      callback(new Error('开始日期应当早于结束日期'))
-    } else {
-      callback()
-    }
-  }, trigger: 'change' }],
 })
 
 const elFormRef = ref()

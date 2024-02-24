@@ -71,11 +71,11 @@ func (taskService *TaskService) GetTaskInfoList(info adminReq.TaskSearch) (list 
 	if info.NeedMain != nil {
 		db = db.Where("need_main = ?", info.NeedMain)
 	}
-	if info.StartStartTime != nil && info.EndStartTime != nil {
-		db = db.Where("start_time BETWEEN ? AND ? ", info.StartStartTime, info.EndStartTime)
+	if info.StartTime != nil {
+		db = db.Where("start_time = ? ", info.StartTime)
 	}
-	if info.StartEndTime != nil && info.EndEndTime != nil {
-		db = db.Where("end_time BETWEEN ? AND ? ", info.StartEndTime, info.EndEndTime)
+	if info.EndTime != nil {
+		db = db.Where("end_time = ? ", info.EndTime)
 	}
 	err = db.Count(&total).Error
 	if err != nil {
