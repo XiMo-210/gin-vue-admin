@@ -8,6 +8,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"strconv"
 )
 
 type TaskApi struct {
@@ -25,19 +26,30 @@ var taskService = service.ServiceGroupApp.AdminServiceGroup.TaskService
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
 // @Router /task/createTask [post]
 func (taskApi *TaskApi) CreateTask(c *gin.Context) {
-	var task admin.Task
-	err := c.ShouldBindJSON(&task)
+	var taskWithStages admin.TaskWithStages
+	err := c.ShouldBindJSON(&taskWithStages)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 
-	if err := taskService.CreateTask(&task); err != nil {
+	if err := taskService.CreateTask(&taskWithStages.Task); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败", c)
-	} else {
-		response.OkWithMessage("创建成功", c)
+		return
 	}
+
+	for _, taskStage := range taskWithStages.TaskStages {
+		*taskStage.TaskId = taskWithStages.Task.ID
+	}
+
+	if err := taskService.CreateTaskStages(taskWithStages.TaskStages); err != nil {
+		global.GVA_LOG.Error("创建失败!", zap.Error(err))
+		response.FailWithMessage("创建失败", c)
+		return
+	}
+
+	response.OkWithMessage("创建成功", c)
 }
 
 // DeleteTask 删除任务
@@ -54,9 +66,16 @@ func (taskApi *TaskApi) DeleteTask(c *gin.Context) {
 	if err := taskService.DeleteTask(ID); err != nil {
 		global.GVA_LOG.Error("删除失败!", zap.Error(err))
 		response.FailWithMessage("删除失败", c)
-	} else {
-		response.OkWithMessage("删除成功", c)
+		return
 	}
+
+	if err := taskService.DeleteTaskStages(ID); err != nil {
+		global.GVA_LOG.Error("删除失败!", zap.Error(err))
+		response.FailWithMessage("删除失败", c)
+		return
+	}
+
+	response.OkWithMessage("删除成功", c)
 }
 
 // DeleteTaskByIds 批量删除任务
@@ -72,9 +91,16 @@ func (taskApi *TaskApi) DeleteTaskByIds(c *gin.Context) {
 	if err := taskService.DeleteTaskByIds(IDs); err != nil {
 		global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
 		response.FailWithMessage("批量删除失败", c)
-	} else {
-		response.OkWithMessage("批量删除成功", c)
+		return
 	}
+
+	if err := taskService.DeleteTaskStagesByIds(IDs); err != nil {
+		global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
+		response.FailWithMessage("批量删除失败", c)
+		return
+	}
+
+	response.OkWithMessage("批量删除成功", c)
 }
 
 // UpdateTask 更新任务
@@ -87,19 +113,32 @@ func (taskApi *TaskApi) DeleteTaskByIds(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
 // @Router /task/updateTask [put]
 func (taskApi *TaskApi) UpdateTask(c *gin.Context) {
-	var task admin.Task
-	err := c.ShouldBindJSON(&task)
+	var taskWithStages admin.TaskWithStages
+	err := c.ShouldBindJSON(&taskWithStages)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 
-	if err := taskService.UpdateTask(task); err != nil {
+	if err := taskService.UpdateTask(taskWithStages.Task); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
-	} else {
-		response.OkWithMessage("更新成功", c)
+		return
 	}
+
+	if err := taskService.DeleteTaskStages(strconv.Itoa(int(taskWithStages.Task.ID))); err != nil {
+		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		response.FailWithMessage("更新失败", c)
+		return
+	}
+
+	if err := taskService.CreateTaskStages(taskWithStages.TaskStages); err != nil {
+		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		response.FailWithMessage("更新失败", c)
+		return
+	}
+
+	response.OkWithMessage("更新成功", c)
 }
 
 // FindTask 用id查询任务
@@ -113,12 +152,24 @@ func (taskApi *TaskApi) UpdateTask(c *gin.Context) {
 // @Router /task/findTask [get]
 func (taskApi *TaskApi) FindTask(c *gin.Context) {
 	ID := c.Query("ID")
-	if retask, err := taskService.GetTask(ID); err != nil {
+	task, err := taskService.GetTask(ID)
+	if err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败", c)
-	} else {
-		response.OkWithData(gin.H{"retask": retask}, c)
+		return
 	}
+
+	taskStages, err := taskService.GetTaskStages(ID)
+	if err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Error(err))
+		response.FailWithMessage("查询失败", c)
+		return
+	}
+
+	response.OkWithData(gin.H{"retask": admin.TaskWithStages{
+		Task:       task,
+		TaskStages: taskStages,
+	}}, c)
 }
 
 // GetTaskList 分页获取任务列表

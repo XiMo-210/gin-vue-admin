@@ -16,6 +16,11 @@ func (taskService *TaskService) CreateTask(task *admin.Task) (err error) {
 	return err
 }
 
+func (taskService *TaskService) CreateTaskStages(taskStages []admin.TaskStage) (err error) {
+	err = global.GVA_DB.Create(taskStages).Error
+	return err
+}
+
 // DeleteTask 删除任务记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (taskService *TaskService) DeleteTask(ID string) (err error) {
@@ -23,10 +28,20 @@ func (taskService *TaskService) DeleteTask(ID string) (err error) {
 	return err
 }
 
+func (taskService *TaskService) DeleteTaskStages(ID string) (err error) {
+	err = global.GVA_DB.Delete(&admin.TaskStage{}, "task_id = ?", ID).Error
+	return err
+}
+
 // DeleteTaskByIds 批量删除任务记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (taskService *TaskService) DeleteTaskByIds(IDs []string) (err error) {
 	err = global.GVA_DB.Delete(&[]admin.Task{}, "id in ?", IDs).Error
+	return err
+}
+
+func (taskService *TaskService) DeleteTaskStagesByIds(IDs []string) (err error) {
+	err = global.GVA_DB.Delete(&[]admin.TaskStage{}, "task_id in ?", IDs).Error
 	return err
 }
 
@@ -41,6 +56,11 @@ func (taskService *TaskService) UpdateTask(task admin.Task) (err error) {
 // Author [piexlmax](https://github.com/piexlmax)
 func (taskService *TaskService) GetTask(ID string) (task admin.Task, err error) {
 	err = global.GVA_DB.Where("id = ?", ID).First(&task).Error
+	return
+}
+
+func (taskService *TaskService) GetTaskStages(ID string) (taskStages []admin.TaskStage, err error) {
+	err = global.GVA_DB.Where("task_id = ?", ID).Find(&taskStages).Error
 	return
 }
 

@@ -89,7 +89,6 @@ func Routers() *gin.Engine {
 		adminRouter.InitStudentInfoRouter(PrivateGroup)
 		adminRouter.InitWxUserRouter(PrivateGroup)
 
-		adminRouter.InitTaskStageRouter(PrivateGroup)
 		adminRouter.InitTaskRouter(PrivateGroup)
 	}
 
