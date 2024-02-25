@@ -90,6 +90,8 @@ func Routers() *gin.Engine {
 		adminRouter.InitWxUserRouter(PrivateGroup)
 
 		adminRouter.InitTaskRouter(PrivateGroup)
+		adminRouter.InitOrganizationRouter(PrivateGroup)
+		adminRouter.InitDepartmentRouter(PrivateGroup)
 	}
 
 	global.GVA_LOG.Info("router register success")
