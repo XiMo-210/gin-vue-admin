@@ -132,6 +132,10 @@ func (taskApi *TaskApi) UpdateTask(c *gin.Context) {
 		return
 	}
 
+	for _, taskStage := range taskWithStages.TaskStages {
+		*taskStage.TaskId = taskWithStages.Task.ID
+	}
+
 	if err := taskService.CreateTaskStages(taskWithStages.TaskStages); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
