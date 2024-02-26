@@ -39,8 +39,8 @@ func (organizationService *OrganizationService) UpdateOrganization(organization 
 
 // GetOrganization 根据ID获取组织社团记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (organizationService *OrganizationService) GetOrganization(ID string) (organization admin.Organization, err error) {
-	err = global.GVA_DB.Where("id = ?", ID).First(&organization).Error
+func (organizationService *OrganizationService) GetOrganization(sysUserId uint) (organization admin.Organization, err error) {
+	err = global.GVA_DB.Where("sys_user_id = ?", sysUserId).First(&organization).Error
 	return
 }
 

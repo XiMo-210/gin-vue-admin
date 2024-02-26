@@ -1,13 +1,16 @@
 package admin
 
 import (
+	"errors"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 type DepartmentApi struct {
@@ -137,7 +140,18 @@ func (departmentApi *DepartmentApi) GetDepartmentList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if list, total, err := departmentService.GetDepartmentInfoList(pageInfo); err != nil {
+
+	claims, _ := c.Get("claims")
+	customClaims, _ := claims.(request.CustomClaims)
+
+	organization, err := organizationService.GetOrganization(customClaims.BaseClaims.ID)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	if list, total, err := departmentService.GetDepartmentInfoList(pageInfo, organization.ID); err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {

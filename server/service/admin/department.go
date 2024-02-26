@@ -46,11 +46,11 @@ func (departmentService *DepartmentService) GetDepartment(ID string) (department
 
 // GetDepartmentInfoList 分页获取部门记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (departmentService *DepartmentService) GetDepartmentInfoList(info adminReq.DepartmentSearch) (list []admin.Department, total int64, err error) {
+func (departmentService *DepartmentService) GetDepartmentInfoList(info adminReq.DepartmentSearch, organizationId uint) (list []admin.Department, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&admin.Department{})
+	db := global.GVA_DB.Model(&admin.Department{}).Where(&admin.Department{OrganizationId: organizationId})
 	var departments []admin.Department
 	// 如果有条件搜索 下方会自动创建搜索语句
 	if info.StartCreatedAt != nil && info.EndCreatedAt != nil {

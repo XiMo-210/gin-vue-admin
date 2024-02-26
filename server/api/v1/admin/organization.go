@@ -1,13 +1,16 @@
 package admin
 
 import (
+	"errors"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 type OrganizationApi struct {
@@ -31,6 +34,10 @@ func (organizationApi *OrganizationApi) CreateOrganization(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+
+	claims, _ := c.Get("claims")
+	customClaims, _ := claims.(request.CustomClaims)
+	organization.SysUserId = customClaims.BaseClaims.ID
 
 	if err := organizationService.CreateOrganization(&organization); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Error(err))
@@ -112,8 +119,10 @@ func (organizationApi *OrganizationApi) UpdateOrganization(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
 // @Router /organization/findOrganization [get]
 func (organizationApi *OrganizationApi) FindOrganization(c *gin.Context) {
-	ID := c.Query("ID")
-	if reorganization, err := organizationService.GetOrganization(ID); err != nil {
+	claims, _ := c.Get("claims")
+	customClaims, _ := claims.(request.CustomClaims)
+
+	if reorganization, err := organizationService.GetOrganization(customClaims.BaseClaims.ID); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败", c)
 	} else {
