@@ -6,4 +6,5 @@ type RouterGroup struct {
 	TaskRouter
 	OrganizationRouter
 	DepartmentRouter
+	CommentScoreRouter
 }

@@ -6,4 +6,5 @@ type ApiGroup struct {
 	TaskApi
 	OrganizationApi
 	DepartmentApi
+	CommentScoreApi
 }
