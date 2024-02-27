@@ -222,26 +222,9 @@
             label="头像"
             label-width="80px"
           >
-            <div
-              style="display:inline-block"
-              @click="openHeaderChange"
-            >
-              <img
-                v-if="userInfo.headerImg"
-                alt="头像"
-                class="header-img-box"
-                :src="(userInfo.headerImg && userInfo.headerImg.slice(0, 4) !== 'http')?path+userInfo.headerImg:userInfo.headerImg"
-              >
-              <div
-                v-else
-                class="header-img-box"
-              >从媒体库选择</div>
-              <ChooseImg
-                ref="chooseImg"
-                :target="userInfo"
-                :target-key="`headerImg`"
-              />
-            </div>
+            <UploadImg
+              v-model="userInfo.headerImg"
+            />
           </el-form-item>
 
         </el-form>
@@ -272,7 +255,7 @@ import {
 
 import { getAuthorityList } from '@/api/authority'
 import CustomPic from '@/components/customPic/index.vue'
-import ChooseImg from '@/components/chooseImg/index.vue'
+import UploadImg from '@/components/uploadImg/uploadImg.vue'
 import WarningBar from '@/components/warningBar/warningBar.vue'
 import { setUserInfo, resetPassword } from '@/api/user.js'
 
@@ -283,7 +266,6 @@ defineOptions({
   name: 'User',
 })
 
-const path = ref(import.meta.env.VITE_BASE_API + '/')
 // 初始化相关
 const setAuthorityOptions = (AuthorityData, optionsData) => {
   AuthorityData &&
@@ -376,11 +358,6 @@ const setAuthorityIds = () => {
       return i.authorityId
     })
   })
-}
-
-const chooseImg = ref(null)
-const openHeaderChange = () => {
-  chooseImg.value.open()
 }
 
 const authOptions = ref([])

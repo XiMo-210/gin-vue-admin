@@ -515,9 +515,8 @@
             label="人像:"
             prop="portrait"
           >
-            <SelectImage
+            <UploadImg
               v-model="formData.portrait"
-              file-type="image"
             />
           </el-form-item>
         </el-form>
@@ -535,13 +534,13 @@
 
     <el-dialog
       v-model="detailShow"
-      style="width: 800px"
+      style="width: 600px"
       lock-scroll
       :before-close="closeDetailShow"
       title="查看详情"
       destroy-on-close
     >
-      <el-scrollbar height="550px">
+      <el-scrollbar height="650px">
         <el-descriptions
           column="1"
           border
@@ -613,7 +612,7 @@ import {
 } from '@/api/studentInfo'
 import { getUrl } from '@/utils/image'
 // 图片选择组件
-import SelectImage from '@/components/selectImage/selectImage.vue'
+import UploadImg from '@/components/uploadImg/uploadImg.vue'
 
 // 全量引入格式化工具 请按需保留
 import { formatDate, ReturnArrImg } from '@/utils/format'

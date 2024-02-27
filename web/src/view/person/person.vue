@@ -5,9 +5,8 @@
         <div class="w-full h-full bg-white px-4 py-8 rounded-lg shadow-lg box-border">
           <div class="user-card px-6 text-center bg-white shrink-0">
             <div class="flex justify-center">
-              <SelectImage
+              <UploadImg
                 v-model="userStore.userInfo.headerImg"
-                file-type="image"
               />
             </div>
             <div class="py-6 text-center">
@@ -319,7 +318,7 @@ import { setSelfInfo, changePassword } from '@/api/user.js'
 import { reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/pinia/modules/user'
-import SelectImage from '@/components/selectImage/selectImage.vue'
+import UploadImg from '@/components/uploadImg/uploadImg.vue'
 
 defineOptions({
   name: 'Person',
