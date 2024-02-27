@@ -7,4 +7,5 @@ type ServiceGroup struct {
 	OrganizationService
 	DepartmentService
 	CommentScoreService
+	InformationService
 }
