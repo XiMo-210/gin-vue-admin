@@ -12,7 +12,13 @@ type OrganizationService struct {
 // CreateOrganization 创建组织社团记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (organizationService *OrganizationService) CreateOrganization(organization *admin.Organization) (err error) {
-	err = global.GVA_DB.Create(organization).Error
+	if err = global.GVA_DB.Create(organization).Error; err != nil {
+		return err
+	}
+	err = global.GVA_DB.Create(&admin.CommentScore{
+		Category: admin.ORGANIZATION_COMMENT,
+		TargetId: organization.ID,
+	}).Error
 	return err
 }
 
