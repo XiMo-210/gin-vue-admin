@@ -222,7 +222,7 @@ import { ref, reactive } from 'vue'
 import UploadImg from '@/components/uploadImg/uploadImg.vue'
 
 defineOptions({
-  name: 'Department'
+  name: 'Organization'
 })
 
 // 自动化生成的字典（可能为空）以及字段
