@@ -8,4 +8,6 @@ type ApiGroup struct {
 	DepartmentApi
 	CommentScoreApi
 	InformationApi
+	BusinessApi
+	CouponApi
 }

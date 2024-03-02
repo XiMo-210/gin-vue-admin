@@ -8,4 +8,6 @@ type RouterGroup struct {
 	DepartmentRouter
 	CommentScoreRouter
 	InformationRouter
+	BusinessRouter
+	CouponRouter
 }

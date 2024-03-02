@@ -8,4 +8,6 @@ type ServiceGroup struct {
 	DepartmentService
 	CommentScoreService
 	InformationService
+	BusinessService
+	CouponService
 }
