@@ -46,11 +46,11 @@ func (couponService *CouponService) GetCoupon(ID string) (coupon admin.Coupon, e
 
 // GetCouponInfoList 分页获取优惠券记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (couponService *CouponService) GetCouponInfoList(info adminReq.CouponSearch) (list []admin.Coupon, total int64, err error) {
+func (couponService *CouponService) GetCouponInfoList(info adminReq.CouponSearch, businessId uint) (list []admin.Coupon, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&admin.Coupon{})
+	db := global.GVA_DB.Model(&admin.Coupon{}).Where(&admin.Coupon{BusinessId: businessId})
 	var coupons []admin.Coupon
 	// 如果有条件搜索 下方会自动创建搜索语句
 	if info.StartCreatedAt != nil && info.EndCreatedAt != nil {

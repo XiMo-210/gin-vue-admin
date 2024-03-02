@@ -8,7 +8,7 @@ import (
 // 店铺商家 结构体  Business
 type Business struct {
 	global.GVA_MODEL
-	SysUserId     *int   `json:"sysUserId" form:"sysUserId" gorm:"column:sys_user_id;comment:;"binding:"required"`            //关联的后台管理用户
+	SysUserId     uint   `json:"sysUserId" form:"sysUserId" gorm:"column:sys_user_id;comment:;"`                              //关联的后台管理用户
 	Name          string `json:"name" form:"name" gorm:"column:name;comment:;"binding:"required"`                             //名称
 	Pic           string `json:"pic" form:"pic" gorm:"column:pic;comment:;"binding:"required"`                                //封面图
 	Address       string `json:"address" form:"address" gorm:"column:address;comment:;"binding:"required"`                    //地址

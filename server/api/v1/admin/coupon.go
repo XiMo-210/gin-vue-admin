@@ -1,13 +1,17 @@
 package admin
 
 import (
+	"errors"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
+	strconv2 "strconv"
 )
 
 type CouponApi struct {
@@ -31,6 +35,8 @@ func (couponApi *CouponApi) CreateCoupon(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+
+	*coupon.RemainCount = *coupon.TotalCount
 
 	if err := couponService.CreateCoupon(&coupon); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Error(err))
@@ -94,6 +100,15 @@ func (couponApi *CouponApi) UpdateCoupon(c *gin.Context) {
 		return
 	}
 
+	oldCoupon, err := couponService.GetCoupon(strconv2.Itoa(int(coupon.ID)))
+	if err != nil {
+		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		response.FailWithMessage("更新失败", c)
+		return
+	}
+
+	*coupon.RemainCount += *coupon.TotalCount - *oldCoupon.TotalCount
+
 	if err := couponService.UpdateCoupon(coupon); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
@@ -137,7 +152,18 @@ func (couponApi *CouponApi) GetCouponList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if list, total, err := couponService.GetCouponInfoList(pageInfo); err != nil {
+
+	claims, _ := c.Get("claims")
+	customClaims, _ := claims.(request.CustomClaims)
+
+	business, err := businessService.GetBusiness(customClaims.BaseClaims.ID)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	if list, total, err := couponService.GetCouponInfoList(pageInfo, business.ID); err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {

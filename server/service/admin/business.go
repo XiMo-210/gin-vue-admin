@@ -12,7 +12,13 @@ type BusinessService struct {
 // CreateBusiness 创建店铺商家记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (businessService *BusinessService) CreateBusiness(business *admin.Business) (err error) {
-	err = global.GVA_DB.Create(business).Error
+	if err = global.GVA_DB.Create(business).Error; err != nil {
+		return err
+	}
+	err = global.GVA_DB.Create(&admin.CommentScore{
+		Category: admin.BUSINESS_COMMENT,
+		TargetId: business.ID,
+	}).Error
 	return err
 }
 
@@ -39,8 +45,8 @@ func (businessService *BusinessService) UpdateBusiness(business admin.Business) 
 
 // GetBusiness 根据ID获取店铺商家记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (businessService *BusinessService) GetBusiness(ID string) (business admin.Business, err error) {
-	err = global.GVA_DB.Where("id = ?", ID).First(&business).Error
+func (businessService *BusinessService) GetBusiness(sysUserId uint) (business admin.Business, err error) {
+	err = global.GVA_DB.Where("sys_user_id = ?", sysUserId).First(&business).Error
 	return
 }
 

@@ -9,7 +9,7 @@ import (
 // 优惠券 结构体  Coupon
 type Coupon struct {
 	global.GVA_MODEL
-	BusinessId        *int       `json:"businessId" form:"businessId" gorm:"column:business_id;comment:;"binding:"required"`                      //所属店铺商家
+	BusinessId        uint       `json:"businessId" form:"businessId" gorm:"column:business_id;comment:;"binding:"required"`                      //所属店铺商家
 	Name              string     `json:"name" form:"name" gorm:"column:name;comment:;"binding:"required"`                                         //优惠券名称
 	TotalCount        *int       `json:"totalCount" form:"totalCount" gorm:"column:total_count;comment:;"binding:"required"`                      //总数量
 	RemainCount       *int       `json:"remainCount" form:"remainCount" gorm:"column:remain_count;comment:;"binding:"required"`                   //剩余数量

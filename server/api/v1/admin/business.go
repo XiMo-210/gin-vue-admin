@@ -1,13 +1,16 @@
 package admin
 
 import (
+	"errors"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 type BusinessApi struct {
@@ -31,6 +34,10 @@ func (businessApi *BusinessApi) CreateBusiness(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+
+	claims, _ := c.Get("claims")
+	customClaims, _ := claims.(request.CustomClaims)
+	business.SysUserId = customClaims.BaseClaims.ID
 
 	if err := businessService.CreateBusiness(&business); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Error(err))
@@ -112,8 +119,10 @@ func (businessApi *BusinessApi) UpdateBusiness(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
 // @Router /business/findBusiness [get]
 func (businessApi *BusinessApi) FindBusiness(c *gin.Context) {
-	ID := c.Query("ID")
-	if rebusiness, err := businessService.GetBusiness(ID); err != nil {
+	claims, _ := c.Get("claims")
+	customClaims, _ := claims.(request.CustomClaims)
+
+	if rebusiness, err := businessService.GetBusiness(customClaims.BaseClaims.ID); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败", c)
 	} else {
