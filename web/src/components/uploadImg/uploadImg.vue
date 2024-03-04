@@ -14,11 +14,11 @@
         style="height: 150px"
         :fit="contain"
       />
-      <el-icon
+      <el-button
         v-else
         class="uploader-icon"
-      ><Plus />
-      </el-icon>
+      >上传
+      </el-button>
     </el-upload>
   </div>
 </template>
