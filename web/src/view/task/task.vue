@@ -13,7 +13,6 @@
           label="任务类型"
           prop="category"
         >
-
           <el-select
             v-model.number="searchInfo.category"
             clearable
@@ -202,7 +201,8 @@
           align="left"
           label="任务学院"
           prop="college"
-          width="240px"
+          width="120px"
+          show-overflow-tooltip="true"
         />
         <el-table-column
           align="left"
@@ -242,19 +242,10 @@
             <el-button
               type="primary"
               link
-              class="table-button"
-              @click="getDetails(scope.row)"
-            >
-              <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
-              查看详情
-            </el-button>
-            <el-button
-              type="primary"
-              link
               icon="edit"
               class="table-button"
               @click="updateTaskFunc(scope.row)"
-            >变更</el-button>
+            >查看 / 变更</el-button>
             <el-button
               type="primary"
               link
@@ -282,80 +273,106 @@
       :title="type==='create'?'添加':'修改'"
       destroy-on-close
     >
-      <el-scrollbar height="500px">
+      <el-scrollbar height="600px">
         <el-form
           ref="elFormRef"
-          :model="formData"
+          :inline="true"
+          :model="taskWithStagesformData"
           label-position="right"
           :rules="rule"
-          label-width="80px"
         >
           <el-form-item
             label="任务类型:"
-            prop="category"
+            prop="task.category"
+            style="width: 40%;"
           >
-            <el-input
-              v-model.number="formData.category"
-              :clearable="true"
-              placeholder="请输入任务类型"
-            />
+            <el-select
+              v-model.number="taskWithStagesformData.task.category"
+              placeholder="请选择"
+            >
+              <el-option
+                key="main"
+                label="主线任务"
+                :value="1"
+              />
+              <el-option
+                key="side"
+                label="支线任务"
+                :value="2"
+              />
+              <el-option
+                key="hide"
+                label="隐藏任务"
+                :value="3"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item
             label="任务名称:"
-            prop="title"
+            prop="task.title"
+            style="width: 40%;"
           >
             <el-input
-              v-model="formData.title"
-              :clearable="true"
+              v-model="taskWithStagesformData.task.title"
               placeholder="请输入任务名称"
             />
           </el-form-item>
-          <el-form-item
-            label="任务描述:"
-            prop="desc"
-          >
-            <el-input
-              v-model="formData.desc"
-              :clearable="true"
-              placeholder="请输入任务描述"
-            />
-          </el-form-item>
+
           <el-form-item
             label="任务校区:"
-            prop="campus"
+            prop="task.campus"
+            style="width: 40%;"
           >
-            <el-input
-              v-model="formData.campus"
-              :clearable="true"
-              placeholder="请输入任务校区"
-            />
+            <el-select
+              v-model="taskWithStagesformData.task.campus"
+              placeholder="请选择"
+            >
+              <el-option
+                key="all"
+                value="全部"
+              />
+              <el-option
+                key="zh"
+                value="朝晖校区"
+              />
+              <el-option
+                key="pf"
+                value="屏峰校区"
+              />
+              <el-option
+                key="mgs"
+                value="莫干山校区"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item
             label="任务学院:"
-            prop="college"
+            prop="task.college"
+            style="width: 40%;"
           >
             <el-input
-              v-model="formData.college"
-              :clearable="true"
+              v-model="taskWithStagesformData.task.college"
               placeholder="请输入任务学院"
             />
           </el-form-item>
           <el-form-item
             label="奖励积分:"
-            prop="reward"
+            prop="task.reward"
+            style="width: 40%;"
           >
             <el-input
-              v-model.number="formData.reward"
-              :clearable="true"
+              v-model.number="taskWithStagesformData.task.reward"
               placeholder="请输入奖励积分"
             />
           </el-form-item>
           <el-form-item
-            label="是否需要完成主线任务:"
-            prop="needMain"
+            v-show="taskWithStagesformData.task.category!==1"
+            label="需要完成主线任务:"
+            prop="task.needMain"
+            style="width: 40%;"
           >
             <el-switch
-              v-model="formData.needMain"
+              v-model="taskWithStagesformData.task.needMain"
               active-color="#13ce66"
               inactive-color="#ff4949"
               active-text="是"
@@ -363,30 +380,239 @@
               clearable
             />
           </el-form-item>
+          <p />
+          <el-form-item>
+            <el-button
+              type="primary"
+              @click="switchIsSetPublishTime"
+            >{{ buttonContent }}</el-button>
+          </el-form-item>
+          <span v-show="publishTimeShow">
+            <el-form-item
+              label="开始时间:"
+              prop="task.startTime"
+              style="width: 30%;"
+            >
+              <el-date-picker
+                v-model="taskWithStagesformData.task.startTime"
+                type="date"
+                placeholder="选择日期"
+                :clearable="true"
+              />
+            </el-form-item>
+            <el-form-item
+              label="结束时间:"
+              prop="task.endTime"
+              style="width: 30%;"
+            >
+              <el-date-picker
+                v-model="taskWithStagesformData.task.endTime"
+                type="date"
+                placeholder="选择日期"
+                :clearable="true"
+              />
+            </el-form-item>
+          </span>
           <el-form-item
-            label="开始时间:"
-            prop="startTime"
+            label="任务描述:"
+            prop="task.desc"
+            style="width: 80%;"
           >
-            <el-date-picker
-              v-model="formData.startTime"
-              type="date"
-              style="width:100%"
-              placeholder="选择日期"
-              :clearable="true"
+            <el-input
+              v-model="taskWithStagesformData.task.desc"
+              placeholder="请输入任务描述"
+              :autosize="{minRows:2,maxRows:4}"
+              type="textarea"
             />
           </el-form-item>
-          <el-form-item
-            label="结束时间:"
-            prop="endTime"
-          >
-            <el-date-picker
-              v-model="formData.endTime"
-              type="date"
-              style="width:100%"
-              placeholder="选择日期"
-              :clearable="true"
-            />
+          <el-divider style="margin: 0px 0px;top: -10px;" />
+        </el-form>
+        <el-form
+          ref="elFormRef"
+          :inline="true"
+          :model="taskWithStagesformData"
+          label-position="right"
+          :rules="rule"
+          label-width="100px"
+        >
+          <el-form-item>
+            <el-button
+              type="primary"
+              @click="addTaskStage"
+            >添加任务阶段</el-button>
           </el-form-item>
+          <el-steps
+            direction="vertical"
+            :active="activeStep"
+          >
+            <div
+              v-for="(taskStage,index) in taskWithStagesformData.taskStages"
+              :key="taskStage.stage"
+            >
+              <el-step :title="'阶段'+(index+1)" />
+              <el-form-item
+                label="阶段任务名称:"
+                :prop="'title'+index"
+                style="width: 40%;"
+              >
+                <el-input
+                  v-model="taskStage.title"
+                  placeholder="阶段任务名称"
+                />
+              </el-form-item>
+              <el-form-item
+                label="所需物品:"
+                :prop="'requiredItem'+index"
+                style="width: 40%;"
+              >
+                <el-input
+                  v-model="taskStage.requiredItem"
+                  placeholder="所需物品"
+                />
+              </el-form-item>
+              <el-form-item
+                label="阶段任务描述:"
+                :prop="'desc'+index"
+                style="width: 80%;"
+              >
+                <el-input
+                  v-model="taskStage.desc"
+                  placeholder="阶段任务描述"
+                  :autosize="{minRows:1,maxRows:2}"
+                  type="textarea"
+                />
+              </el-form-item>
+              <el-form-item
+                label="图片描述:"
+                :prop="'imgs'+index"
+                style="width: 20%;"
+              >
+                <UploadMultipleImg
+                  v-model="taskStage.imgs"
+                />
+              </el-form-item>
+              <p />
+              <el-form-item
+                label="摄像头打卡:"
+                :prop="'needCamera'+index"
+                style="width: 20%;"
+              >
+                <el-switch
+                  v-model="taskStage.needCamera"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  active-text="是"
+                  inactive-text="否"
+                  @click="needCamera(taskStage)"
+                />
+              </el-form-item>
+              <el-form-item
+                v-show="taskStage.needCamera"
+                label="摄像头编号:"
+                :prop="'cameraId'+index"
+                style="width: 35%;"
+              >
+                <el-input
+                  v-model.number="taskStage.cameraId"
+                  placeholder="摄像头编号"
+                />
+              </el-form-item>
+              <p />
+              <span v-show="!taskStage.needCamera">
+                <el-form-item
+                  label="图片打卡:"
+                  :prop="'needPic'+index"
+                  style="width: 20%;"
+                >
+                  <el-switch
+                    v-model="taskStage.needPic"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    active-text="是"
+                    inactive-text="否"
+                  />
+                </el-form-item>
+                <span v-show="taskStage.needPic">
+                  <el-form-item
+                    label="需要人脸:"
+                    :prop="'needFace'+index"
+                    style="width: 20%;"
+                  >
+                    <el-switch
+                      v-model="taskStage.needFace"
+                      active-color="#13ce66"
+                      inactive-color="#ff4949"
+                      active-text="是"
+                      inactive-text="否"
+                    />
+                  </el-form-item>
+                  <el-form-item
+                    :prop="'pic'+index"
+                  >
+                    <UploadImg
+                      v-model="taskStage.pic"
+                      style="margin-left: 80px;"
+                    />
+                  </el-form-item>
+                </span>
+                <p />
+                <el-form-item
+                  label="位置打卡:"
+                  :prop="'needLoc'+index"
+                  style="width: 20%;"
+                >
+                  <el-switch
+                    v-model="taskStage.needLoc"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    active-text="是"
+                    inactive-text="否"
+                  />
+                </el-form-item>
+                <el-form-item
+                  label="允许导航:"
+                  :prop="'needNav'+index"
+                  style="width: 20%;"
+                >
+                  <el-switch
+                    v-model="taskStage.needNav"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    active-text="是"
+                    inactive-text="否"
+                  />
+                </el-form-item>
+                <el-form-item
+                  v-show="taskStage.needLoc||taskStage.needNav"
+                  style="margin-left: 6% ;"
+                >
+                  <el-button
+                    type="primary"
+                    size="default"
+                    @click="openAmapDialog(index)"
+                  >选择位置
+                  </el-button>
+                </el-form-item>
+                <el-form-item
+                  v-show="taskStage.needLoc||taskStage.needNav"
+                  :prop="'loc'+index"
+                  style="width: 22%;margin-left: -3.5%;"
+                >
+                  <el-input
+                    v-model="taskStage.loc"
+                    placeholder="位置"
+                    disabled
+                  />
+                </el-form-item>
+
+              </span>
+              <el-divider style="margin: 0px 0px;top: -10px;" />
+            </div>
+          </el-steps>
+          <el-button
+            type="primary"
+            @click.prevent="removeTaskStage"
+          >删除阶段</el-button>
         </el-form>
       </el-scrollbar>
       <template #footer>
@@ -399,49 +625,14 @@
         </div>
       </template>
     </el-dialog>
-
     <el-dialog
-      v-model="detailShow"
-      style="width: 800px"
-      lock-scroll
-      :before-close="closeDetailShow"
-      title="查看详情"
+      v-model="amapDialog"
+      :before-close="closeAmapDialog"
       destroy-on-close
     >
-      <el-scrollbar height="550px">
-        <el-descriptions
-          column="1"
-          border
-        >
-          <el-descriptions-item label="任务类型">
-            {{ formData.category }}
-          </el-descriptions-item>
-          <el-descriptions-item label="任务名称">
-            {{ formData.title }}
-          </el-descriptions-item>
-          <el-descriptions-item label="任务描述">
-            {{ formData.desc }}
-          </el-descriptions-item>
-          <el-descriptions-item label="任务校区">
-            {{ formData.campus }}
-          </el-descriptions-item>
-          <el-descriptions-item label="任务学院">
-            {{ formData.college }}
-          </el-descriptions-item>
-          <el-descriptions-item label="奖励积分">
-            {{ formData.reward }}
-          </el-descriptions-item>
-          <el-descriptions-item label="是否需要完成主线任务">
-            {{ formatBoolean(formData.needMain) }}
-          </el-descriptions-item>
-          <el-descriptions-item label="开始时间">
-            {{ formatDate(formData.startTime) }}
-          </el-descriptions-item>
-          <el-descriptions-item label="结束时间">
-            {{ formatDate(formData.endTime) }}
-          </el-descriptions-item>
-        </el-descriptions>
-      </el-scrollbar>
+      <Amap
+        v-model="amapParam.loc"
+      />
     </el-dialog>
   </div>
 </template>
@@ -456,6 +647,10 @@ import {
   getTaskList
 } from '@/api/task'
 
+import UploadImg from '@/components/uploadImg/uploadImg.vue'
+import UploadMultipleImg from '@/components/uploadImg/uploadMultipleImg.vue'
+import Amap from '@/components/amap/amap.vue'
+
 // 全量引入格式化工具 请按需保留
 import { formatDate, formatBoolean } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -465,39 +660,15 @@ defineOptions({
   name: 'Task'
 })
 
-// 自动化生成的字典（可能为空）以及字段
-const formData = ref({
-  category: 0,
-  title: '',
-  desc: '',
-  campus: '',
-  college: '',
-  reward: 0,
-  needMain: false,
-  startTime: new Date(),
-  endTime: new Date(),
-})
-
 // 验证规则
 const rule = reactive({
-  category: [{
+  'task.category': [{
     required: true,
     message: '',
     trigger: ['input', 'blur'],
   },
   ],
-  title: [{
-    required: true,
-    message: '',
-    trigger: ['input', 'blur'],
-  },
-  {
-    whitespace: true,
-    message: '不能只输入空格',
-    trigger: ['input', 'blur'],
-  }
-  ],
-  desc: [{
+  'task.title': [{
     required: true,
     message: '',
     trigger: ['input', 'blur'],
@@ -508,7 +679,7 @@ const rule = reactive({
     trigger: ['input', 'blur'],
   }
   ],
-  campus: [{
+  'task.desc': [{
     required: true,
     message: '',
     trigger: ['input', 'blur'],
@@ -519,7 +690,7 @@ const rule = reactive({
     trigger: ['input', 'blur'],
   }
   ],
-  college: [{
+  'task.campus': [{
     required: true,
     message: '',
     trigger: ['input', 'blur'],
@@ -530,25 +701,36 @@ const rule = reactive({
     trigger: ['input', 'blur'],
   }
   ],
-  reward: [{
+  'task.college': [{
+    required: true,
+    message: '',
+    trigger: ['input', 'blur'],
+  },
+  {
+    whitespace: true,
+    message: '不能只输入空格',
+    trigger: ['input', 'blur'],
+  }
+  ],
+  'task.reward': [{
     required: true,
     message: '',
     trigger: ['input', 'blur'],
   },
   ],
-  needMain: [{
+  'task.needMain': [{
     required: true,
     message: '',
     trigger: ['input', 'blur'],
   },
   ],
-  startTime: [{
+  'task.startTime': [{
     required: true,
     message: '',
     trigger: ['input', 'blur'],
   },
   ],
-  endTime: [{
+  'task.endTime': [{
     required: true,
     message: '',
     trigger: ['input', 'blur'],
@@ -684,19 +866,6 @@ const onDelete = async() => {
   }
 }
 
-// 行为控制标记（弹窗内部需要增还是改）
-const type = ref('')
-
-// 更新行
-const updateTaskFunc = async(row) => {
-  const res = await findTask({ ID: row.ID })
-  type.value = 'update'
-  if (res.code === 0) {
-    formData.value = res.data.retask
-    dialogFormVisible.value = true
-  }
-}
-
 // 删除行
 const deleteTaskFunc = async(row) => {
   const res = await deleteTask({ ID: row.ID })
@@ -712,62 +881,95 @@ const deleteTaskFunc = async(row) => {
   }
 }
 
-// 弹窗控制标记
-const dialogFormVisible = ref(false)
-
-// 查看详情控制标记
-const detailShow = ref(false)
-
-// 打开详情弹窗
-const openDetailShow = () => {
-  detailShow.value = true
-}
-
-// 打开详情
-const getDetails = async(row) => {
-  // 打开弹窗
-  const res = await findTask({ ID: row.ID })
-  if (res.code === 0) {
-    formData.value = res.data.retask
-    openDetailShow()
-  }
-}
-
-// 关闭详情弹窗
-const closeDetailShow = () => {
-  detailShow.value = false
-  formData.value = {
-    category: 0,
+const taskWithStagesformData = ref({
+  task: {
+    id: 0,
+    category: 1,
     title: '',
     desc: '',
-    campus: '',
-    college: '',
+    campus: '全部',
+    college: '全部',
     reward: 0,
     needMain: false,
     startTime: new Date(),
     endTime: new Date(),
+  },
+  taskStages: [{
+    stage: 1,
+    title: '',
+    desc: '',
+    requiredItem: '',
+    imgs: [],
+    needPic: false,
+    needFace: false,
+    pic: '',
+    needLoc: false,
+    allowDist: 0,
+    needNav: false,
+    loc: '',
+    needCamera: false,
+    cameraId: 0
+  }],
+})
+
+// 行为控制标记（弹窗内部需要增还是改）
+const type = ref('')
+
+// 更新行
+const updateTaskFunc = async(row) => {
+  setPublishTime()
+  const res = await findTask({ ID: row.ID })
+  type.value = 'update'
+  if (res.code === 0) {
+    taskWithStagesformData.value = res.data.retask
+    dialogFormVisible.value = true
   }
+  activeStep.value = res.data.retask.taskStages.length
 }
+
+// 弹窗控制标记
+const dialogFormVisible = ref(false)
 
 // 打开弹窗
 const openDialog = () => {
   type.value = 'create'
   dialogFormVisible.value = true
+  setPublishTime()
+  activeStep.value = 1
 }
 
 // 关闭弹窗
 const closeDialog = () => {
   dialogFormVisible.value = false
-  formData.value = {
-    category: 0,
-    title: '',
-    desc: '',
-    campus: '',
-    college: '',
-    reward: 0,
-    needMain: false,
-    startTime: new Date(),
-    endTime: new Date(),
+  taskWithStagesformData.value = {
+    task: {
+      id: 0,
+      category: 1,
+      title: '',
+      desc: '',
+      campus: '全部',
+      college: '全部',
+      reward: 0,
+      needMain: false,
+      startTime: new Date(),
+      endTime: new Date(),
+    },
+    taskStages: [{
+      stage: 1,
+      title: '',
+      desc: '',
+      requiredItem: '',
+      imgs: [],
+      needPic: false,
+      needFace: false,
+      pic: '',
+      needLoc: false,
+      allowDist: 0,
+      needNav: false,
+      loc: '',
+      needCamera: false,
+      cameraId: 0
+    }],
   }
 }
 // 弹窗确定
@@ -777,13 +979,10 @@ const enterDialog = async() => {
     let res
     switch (type.value) {
       case 'create':
-        res = await createTask(formData.value)
+        res = await createTask(taskWithStagesformData.value)
         break
       case 'update':
-        res = await updateTask(formData.value)
-        break
-      default:
-        res = await createTask(formData.value)
+        res = await updateTask(taskWithStagesformData.value)
         break
     }
     if (res.code === 0) {
@@ -795,6 +994,102 @@ const enterDialog = async() => {
       getTableData()
     }
   })
+}
+
+const publishTimeShow = ref(true)
+const buttonContent = ref('')
+const activeStep = ref(0)
+
+function notSetPublishTime() {
+  publishTimeShow.value = false
+  buttonContent.value = '设置任务时间'
+  taskWithStagesformData.value.task.startTime = taskWithStagesformData.value.task.endTime = new Date('2000-01-01')
+}
+
+function setPublishTime() {
+  publishTimeShow.value = true
+  buttonContent.value = '暂不发布任务'
+  taskWithStagesformData.value.task.startTime = taskWithStagesformData.value.task.endTime = new Date()
+}
+
+function switchIsSetPublishTime() {
+  if (publishTimeShow.value) {
+    notSetPublishTime()
+  } else {
+    setPublishTime()
+  }
+}
+
+function addTaskStage() {
+  taskWithStagesformData.value.taskStages.push({
+    stage: taskWithStagesformData.value.taskStages.length + 1,
+    title: '',
+    desc: '',
+    requiredItem: '',
+    imgs: [],
+    needPic: false,
+    needFace: false,
+    pic: '',
+    needLoc: false,
+    allowDist: 0,
+    needNav: false,
+    loc: '',
+    needCamera: false,
+    cameraId: 0
+  })
+  activeStep.value += 1
+}
+
+function needCamera(taskStage) {
+  taskStage.needPic = false
+  taskStage.needFace = false
+  taskStage.pic = ''
+  taskStage.needLoc = false
+  taskStage.allowDist = 0
+}
+
+function removeTaskStage() {
+  if (taskWithStagesformData.value.taskStages.length !== 1) {
+    taskWithStagesformData.value.taskStages.pop()
+    activeStep.value -= 1
+  }
+}
+
+const amapDialog = ref(false)
+
+const amapParam = ref({
+  index: 0,
+  loc: {
+    longitude: 0,
+    latitude: 0
+  }
+})
+
+const openAmapDialog = (i) => {
+  if (taskWithStagesformData.value.taskStages[i].loc === '') {
+    amapParam.value = {
+      index: i,
+      loc: {
+        longitude: 0,
+        latitude: 0
+      }
+    }
+  } else {
+    const locParts = taskWithStagesformData.value.taskStages[i].loc.split(',')
+    amapParam.value = {
+      index: i,
+      loc: {
+        longitude: locParts[0],
+        latitude: locParts[1],
+      }
+    }
+  }
+  amapDialog.value = true
+}
+
+const closeAmapDialog = () => {
+  taskWithStagesformData.value.taskStages[amapParam.value.index].loc = amapParam.value.loc.longitude + ',' + amapParam.value.loc.latitude
+  amapDialog.value = false
 }
 
 </script>
