@@ -12,7 +12,13 @@ type TaskService struct {
 // CreateTask 创建任务记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (taskService *TaskService) CreateTask(task *admin.Task) (err error) {
-	err = global.GVA_DB.Create(task).Error
+	if err = global.GVA_DB.Create(task).Error; err != nil {
+		return err
+	}
+	err = global.GVA_DB.Create(&admin.CommentScore{
+		Category: admin.TASK_COMMENT,
+		TargetId: task.ID,
+	}).Error
 	return err
 }
 
