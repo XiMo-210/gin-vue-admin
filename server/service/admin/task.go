@@ -17,7 +17,7 @@ func (taskService *TaskService) CreateTask(task *admin.Task) (err error) {
 }
 
 func (taskService *TaskService) CreateTaskStages(taskStages []admin.TaskStage) (err error) {
-	err = global.GVA_DB.Create(taskStages).Error
+	err = global.GVA_DB.Omit("id").Create(taskStages).Error
 	return err
 }
 

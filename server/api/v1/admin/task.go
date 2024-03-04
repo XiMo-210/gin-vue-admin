@@ -39,8 +39,8 @@ func (taskApi *TaskApi) CreateTask(c *gin.Context) {
 		return
 	}
 
-	for _, taskStage := range taskWithStages.TaskStages {
-		*taskStage.TaskId = taskWithStages.Task.ID
+	for i, _ := range taskWithStages.TaskStages {
+		taskWithStages.TaskStages[i].TaskId = taskWithStages.Task.ID
 	}
 
 	if err := taskService.CreateTaskStages(taskWithStages.TaskStages); err != nil {
@@ -132,8 +132,9 @@ func (taskApi *TaskApi) UpdateTask(c *gin.Context) {
 		return
 	}
 
-	for _, taskStage := range taskWithStages.TaskStages {
-		*taskStage.TaskId = taskWithStages.Task.ID
+	for i, _ := range taskWithStages.TaskStages {
+		taskWithStages.TaskStages[i].TaskId = taskWithStages.Task.ID
+
 	}
 
 	if err := taskService.CreateTaskStages(taskWithStages.TaskStages); err != nil {
