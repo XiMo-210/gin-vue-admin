@@ -271,32 +271,9 @@
             label="图片:"
             prop="imgs"
           >
-            <div>
-              <el-upload
-                class="upload-demo"
-                action="https://api.lonesome.cn/api/wx/upload"
-                :show-file-list="false"
-                :on-success="uploadSuccess"
-              >
-                <el-button
-                  type="primary"
-                >点击上传</el-button>
-              </el-upload>
-
-              <div class="image-list">
-                <div
-                  v-for="(img, index) in formData.imgs"
-                  :key="index"
-                  class="thumbnail-item"
-                >
-                  <el-image
-                    :src="img"
-                    fit="cover"
-                    style="width: 100px; height: 100px;"
-                  />
-                </div>
-              </div>
-            </div>
+            <UploadMultipleImg
+              v-model="formData.imgs"
+            />
           </el-form-item>
         </el-form>
       </el-scrollbar>
@@ -327,6 +304,7 @@ import {
 import { formatDate } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
+import UploadMultipleImg from '@/components/uploadImg/uploadMultipleImg.vue'
 
 defineOptions({
   name: 'Information'
@@ -595,35 +573,8 @@ function formatCategory(category) {
   }
 }
 
-const uploadSuccess = (res) => {
-  const { data } = res
-  if (data) {
-    formData.value.imgs.push(data)
-  }
-  console.log(formData.value.imgs)
-  ElMessage({
-    type: 'success',
-    message: '上传成功'
-  })
-}
-
 </script>
 
 <style>
-.upload-demo {
-  display: inline-block;
-  margin-bottom: 20px;
-}
 
-.image-list {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.thumbnail-item {
-  position: relative;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
 </style>
