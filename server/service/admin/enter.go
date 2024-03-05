@@ -10,4 +10,5 @@ type ServiceGroup struct {
 	InformationService
 	BusinessService
 	CouponService
+	UserTaskService
 }

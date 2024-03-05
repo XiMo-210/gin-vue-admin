@@ -10,4 +10,5 @@ type ApiGroup struct {
 	InformationApi
 	BusinessApi
 	CouponApi
+	UserTaskApi
 }
