@@ -183,7 +183,11 @@
           label="任务类型"
           prop="category"
           width="120"
-        />
+        >
+          <template #default="scope">
+            {{ formatCategory(scope.row.category) }}
+          </template>
+        </el-table-column>
         <el-table-column
           align="left"
           label="任务描述"
@@ -1090,6 +1094,17 @@ const openAmapDialog = (i) => {
 const closeAmapDialog = () => {
   taskWithStagesformData.value.taskStages[amapParam.value.index].loc = amapParam.value.loc.longitude + ',' + amapParam.value.loc.latitude
   amapDialog.value = false
+}
+
+function formatCategory(category) {
+  switch (category) {
+    case 1:
+      return '主线任务'
+    case 2:
+      return '支线任务'
+    case 3:
+      return '隐藏任务'
+  }
 }
 
 </script>
