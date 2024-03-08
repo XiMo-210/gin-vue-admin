@@ -190,6 +190,13 @@
         </el-table-column>
         <el-table-column
           align="left"
+          label="任务名称"
+          prop="title"
+          width="120"
+          show-overflow-tooltip="true"
+        />
+        <el-table-column
+          align="left"
           label="任务描述"
           prop="desc"
           width="160"
