@@ -4,9 +4,27 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/admin/response"
 )
 
 type UserTaskService struct {
+}
+
+func (userTaskService *UserTaskService) GetUserCompletedTasks(userId string) (completedTasks []response.CompletedTask, err error) {
+	err = global.GVA_DB.Model(&admin.UserTask{}).Select("tasks.*, user_tasks.*").
+		Joins("LEFT JOIN tasks ON tasks.id = user_tasks.task_id").
+		Where("user_tasks.user_id = ? AND user_tasks.cur_stage = 0", userId).
+		Order("user_tasks.updated_at desc").Find(&completedTasks).Error
+
+	return
+}
+
+func (userTaskService *UserTaskService) GetUserTaskByUserAndTask(userId, taskId uint) (userTask admin.UserTask, err error) {
+	err = global.GVA_DB.Model(&admin.UserTask{}).
+		Where("user_id = ? AND task_id = ?", userId, taskId).
+		First(&userTask).Error
+
+	return
 }
 
 // CreateUserTask 创建用户任务记录记录

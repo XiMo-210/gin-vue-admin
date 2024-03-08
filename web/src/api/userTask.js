@@ -1,5 +1,13 @@
 import service from '@/utils/request'
 
+export const getUserTaskCondition = (params) => {
+  return service({
+    url: '/userTask/getUserTaskCondition',
+    method: 'get',
+    params
+  })
+}
+
 // @Tags UserTask
 // @Summary 创建用户任务记录
 // @Security ApiKeyAuth

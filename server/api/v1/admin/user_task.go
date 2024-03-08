@@ -4,16 +4,72 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
+	adminResp "github.com/flipped-aurora/gin-vue-admin/server/model/admin/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"strconv"
 )
 
 type UserTaskApi struct {
 }
 
 var userTaskService = service.ServiceGroupApp.AdminServiceGroup.UserTaskService
+
+func (userTaskApi *UserTaskApi) GetUserTaskCondition(c *gin.Context) {
+	ID := c.Query("ID")
+
+	wxUser, err := wxUserService.GetWxUser(ID)
+	if err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Error(err))
+		response.FailWithMessage("查询失败", c)
+		return
+	}
+
+	var task admin.Task
+	var taskStages []admin.TaskStage
+	var curUserTask admin.UserTask
+	if *wxUser.CurTask != 0 {
+		task, err = taskService.GetTask(strconv.Itoa(*wxUser.CurTask))
+		if err != nil {
+			global.GVA_LOG.Error("查询失败!", zap.Error(err))
+			response.FailWithMessage("查询失败", c)
+			return
+		}
+
+		taskStages, err = taskService.GetTaskStages(strconv.Itoa(*wxUser.CurTask))
+		if err != nil {
+			global.GVA_LOG.Error("查询失败!", zap.Error(err))
+			response.FailWithMessage("查询失败", c)
+			return
+		}
+
+		curUserTask, err = userTaskService.GetUserTaskByUserAndTask(wxUser.ID, uint(*wxUser.CurTask))
+		if err != nil {
+			global.GVA_LOG.Error("查询失败!", zap.Error(err))
+			response.FailWithMessage("查询失败", c)
+			return
+		}
+	}
+
+	completedTasks, err := userTaskService.GetUserCompletedTasks(ID)
+	if err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	response.OkWithDetailed(adminResp.GetUserTaskCondition{
+		CurTask: admin.TaskWithStages{
+			Task:       task,
+			TaskStages: taskStages,
+		},
+		CurUserTask:    curUserTask,
+		CompletedTasks: completedTasks,
+	}, "获取成功", c)
+
+}
 
 // CreateUserTask 创建用户任务记录
 // @Tags UserTask

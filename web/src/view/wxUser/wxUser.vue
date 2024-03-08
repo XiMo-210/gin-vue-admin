@@ -169,7 +169,7 @@
         >
           <template #default="scope">
             <el-image
-              style="width: 100px; height: 100px"
+              style="width: 50px; height: 50px"
               :src="getUrl(scope.row.avatar)"
               fit="cover"
             />
@@ -199,7 +199,7 @@
         </el-table-column>
         <el-table-column
           align="left"
-          label="正在进行的任务"
+          label="正在进行的任务ID"
           prop="curTask"
           width="160"
         />
@@ -207,7 +207,7 @@
           align="left"
           label="操作"
           fixed="right"
-          min-width="240"
+          min-width="360"
         >
           <template #default="scope">
             <el-button
@@ -225,8 +225,15 @@
               class="table-button"
               @click="getStudentInfoDetails(scope.row)"
             >
-              <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
               关联学生
+            </el-button>
+            <el-button
+              type="primary"
+              link
+              class="table-button"
+              @click="getUserTaskConditionInfo(scope.row)"
+            >
+              任务情况
             </el-button>
             <el-button
               type="primary"
@@ -348,6 +355,131 @@
         </el-descriptions>
       </el-scrollbar>
     </el-dialog>
+    <el-dialog
+      v-model="userTaskConditionShow"
+      style="width: 600px"
+      lock-scroll
+      :before-close="closeUserTaskConditionShow"
+      title="任务情况"
+      destroy-on-close
+    >
+      <el-scrollbar max-height="600px">
+        <div v-show="userTaskCondition.curTask.task.ID!==0">
+          <el-descriptions
+            title="正在进行的任务"
+            :column="2"
+            border
+          >
+            <el-descriptions-item
+              label="任务类型"
+              min-width="80px"
+            >{{ formatCategory(userTaskCondition.curTask.task.category) }}</el-descriptions-item>
+            <el-descriptions-item
+              label="奖励积分"
+              min-width="80px"
+            >{{ userTaskCondition.curTask.task.reward }}</el-descriptions-item>
+            <el-descriptions-item label="任务校区">{{ userTaskCondition.curTask.task.campus }}</el-descriptions-item>
+            <el-descriptions-item label="任务学院">{{ userTaskCondition.curTask.task.college }}</el-descriptions-item>
+            <el-descriptions-item label="任务名称">{{ userTaskCondition.curTask.task.title }}</el-descriptions-item>
+            <el-descriptions-item label="任务描述">{{ userTaskCondition.curTask.task.desc }}</el-descriptions-item>
+
+          </el-descriptions>
+          <el-collapse>
+            <el-collapse-item>
+              <template #title>
+                <el-text
+                  tag="b"
+                  style="color:cadetblue"
+                >
+                  阶段详情
+                </el-text>
+              </template>
+              <el-steps
+                direction="vertical"
+                :active="userTaskCondition.curUserTask.curStage-1"
+                finish-status="success"
+              >
+                <el-step
+                  v-for="(taskStage, index) in userTaskCondition.curTask.taskStages"
+                  :key="index"
+                  :title="'Stage'+(index+1)"
+                >
+                  <template #description>
+                    {{ taskStage.title }}
+                    <br>
+                    {{ taskStage.desc }}
+                    <br>
+                    {{ (index+2===userTaskCondition.curUserTask.curStage? "完成时间: "+formatDate(userTaskCondition.curUserTask.UpdatedAt):'') }}
+                  </template>
+                </el-step>
+              </el-steps>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
+        <el-divider style="margin-top: 0px;" />
+        <el-text
+          tag="b"
+          size="large"
+          style="color: black;"
+        >
+          已完成任务
+        </el-text>
+        <el-table
+          :data="userTaskCondition.completedTasks"
+          stripe
+          style="width: 100%"
+          :header-cell-style="{ 'text-align': 'center' }"
+          :cell-style="{ textAlign: 'center' }"
+        >
+          <el-table-column
+            prop="finishTime"
+            label="完成时间"
+            width="160"
+          >
+            <template #default="scope">
+              {{ formatDate(scope.row.finishTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="category"
+            label="任务类型"
+            width="120"
+          >
+            <template #default="scope">
+              {{ formatCategory(scope.row.category) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="title"
+            label="任务名称"
+            width="120"
+            show-overflow-tooltip="true"
+          />
+          <el-table-column
+            prop="desc"
+            label="任务描述"
+            width="160"
+            show-overflow-tooltip="true"
+          />
+          <el-table-column
+            prop="campus"
+            label="任务校区"
+            width="120"
+          />
+          <el-table-column
+            prop="college"
+            label="任务学院"
+            width="120"
+          />
+          <el-table-column
+            prop="reward"
+            label="奖励积分"
+            width="100"
+          />
+
+        </el-table>
+      </el-scrollbar>
+    </el-dialog>
   </div>
 </template>
 
@@ -361,6 +493,9 @@ import {
 import {
   findStudentInfo,
 } from '@/api/studentInfo'
+import {
+  getUserTaskCondition,
+} from '@/api/userTask'
 import { getUrl } from '@/utils/image'
 
 // 全量引入格式化工具 请按需保留
@@ -636,6 +771,80 @@ const closeStudentInfoDetailShow = () => {
   }
 }
 
+const userTaskCondition = ref({
+  curTask: {
+    task: {
+      ID: 0,
+      category: 1,
+      title: '',
+      desc: '',
+      campus: '全部',
+      college: '全部',
+      reward: 0,
+      needMain: false,
+      startTime: new Date(),
+      endTime: new Date(),
+    },
+    taskStages: [{
+      stage: 1,
+      title: '',
+      desc: '',
+      requiredItem: '',
+      imgs: [],
+      needPic: false,
+      needFace: false,
+      pic: '',
+      needLoc: false,
+      allowDist: 0,
+      needNav: false,
+      loc: '',
+      needCamera: false,
+      cameraId: 0
+    }],
+  },
+  curUserTask: {
+    curStage: 1,
+    UpdatedAt: new Date(),
+  },
+  completedTasks: [{
+    category: 1,
+    title: '',
+    desc: '',
+    campus: '全部',
+    college: '全部',
+    reward: '',
+    finishTime: new Date(),
+  }]
+})
+
+const userTaskConditionShow = ref(false)
+
+const openUserTaskConditionShow = () => {
+  userTaskConditionShow.value = true
+}
+
+const getUserTaskConditionInfo = async(row) => {
+  const res = await getUserTaskCondition({ ID: row.ID })
+  if (res.code === 0) {
+    userTaskCondition.value = res.data
+    openUserTaskConditionShow()
+  }
+}
+
+const closeUserTaskConditionShow = () => {
+  userTaskConditionShow.value = false
+}
+
+function formatCategory(category) {
+  switch (category) {
+    case 1:
+      return '主线任务'
+    case 2:
+      return '支线任务'
+    case 3:
+      return '隐藏任务'
+  }
+}
 </script>
 
 <style>

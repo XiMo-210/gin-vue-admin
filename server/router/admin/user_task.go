@@ -23,5 +23,6 @@ func (s *UserTaskRouter) InitUserTaskRouter(Router *gin.RouterGroup) {
 	{
 		userTaskRouterWithoutRecord.GET("findUserTask", userTaskApi.FindUserTask)       // 根据ID获取用户任务记录
 		userTaskRouterWithoutRecord.GET("getUserTaskList", userTaskApi.GetUserTaskList) // 获取用户任务记录列表
+		userTaskRouterWithoutRecord.GET("getUserTaskCondition", userTaskApi.GetUserTaskCondition)
 	}
 }
