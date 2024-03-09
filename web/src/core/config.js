@@ -3,8 +3,8 @@
  */
 
 const config = {
-  appName: 'Gin-Vue-Admin',
-  appLogo: 'https://www.gin-vue-admin.com/img/logo.png',
+  appName: 'E启新篇',
+  appLogo: 'https://download.tooc.xlj0.com/Tooc/14/14/logo.png',
   showViteLogo: true,
   logs: [],
 }
