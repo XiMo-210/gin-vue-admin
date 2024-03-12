@@ -36,7 +36,7 @@ func (organizationApi *OrganizationApi) CreateOrganization(c *gin.Context) {
 	}
 
 	claims, _ := c.Get("claims")
-	customClaims, _ := claims.(request.CustomClaims)
+	customClaims, _ := claims.(*request.CustomClaims)
 	organization.SysUserId = customClaims.BaseClaims.ID
 
 	if err := organizationService.CreateOrganization(&organization); err != nil {
@@ -120,11 +120,11 @@ func (organizationApi *OrganizationApi) UpdateOrganization(c *gin.Context) {
 // @Router /organization/findOrganization [get]
 func (organizationApi *OrganizationApi) FindOrganization(c *gin.Context) {
 	claims, _ := c.Get("claims")
-	customClaims, _ := claims.(request.CustomClaims)
+	customClaims, _ := claims.(*request.CustomClaims)
 
 	if reorganization, err := organizationService.GetOrganization(customClaims.BaseClaims.ID); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		global.GVA_LOG.Error("查询失败!", zap.Error(err))
-		response.FailWithMessage("查询失败", c)
+		global.GVA_LOG.Error("未完善组织社团信息!", zap.Error(err))
+		response.FailWithMessage("未完善组织社团信息", c)
 	} else {
 		response.OkWithData(gin.H{"reorganization": reorganization}, c)
 	}

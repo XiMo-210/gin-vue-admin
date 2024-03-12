@@ -36,7 +36,7 @@ func (businessApi *BusinessApi) CreateBusiness(c *gin.Context) {
 	}
 
 	claims, _ := c.Get("claims")
-	customClaims, _ := claims.(request.CustomClaims)
+	customClaims, _ := claims.(*request.CustomClaims)
 	business.SysUserId = customClaims.BaseClaims.ID
 
 	if err := businessService.CreateBusiness(&business); err != nil {
@@ -120,11 +120,11 @@ func (businessApi *BusinessApi) UpdateBusiness(c *gin.Context) {
 // @Router /business/findBusiness [get]
 func (businessApi *BusinessApi) FindBusiness(c *gin.Context) {
 	claims, _ := c.Get("claims")
-	customClaims, _ := claims.(request.CustomClaims)
+	customClaims, _ := claims.(*request.CustomClaims)
 
 	if rebusiness, err := businessService.GetBusiness(customClaims.BaseClaims.ID); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		global.GVA_LOG.Error("查询失败!", zap.Error(err))
-		response.FailWithMessage("查询失败", c)
+		global.GVA_LOG.Error("未完善店铺商家信息!", zap.Error(err))
+		response.FailWithMessage("未完善店铺商家信息", c)
 	} else {
 		response.OkWithData(gin.H{"rebusiness": rebusiness}, c)
 	}
