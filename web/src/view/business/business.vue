@@ -1163,7 +1163,6 @@ const getBusinessInfo = async() => {
   const info = await findBusiness()
   if (info.code === 0) {
     businessInfo.value = info.data.rebusiness
-    console.log(businessInfo)
   }
   if (info.data.rebusiness.ID === 0) {
     businessType.value = 'create'
