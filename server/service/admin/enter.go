@@ -11,4 +11,6 @@ type ServiceGroup struct {
 	BusinessService
 	CouponService
 	UserTaskService
+	AdvertiserService
+	AdService
 }

@@ -97,6 +97,9 @@ func Routers() *gin.Engine {
 		adminRouter.InitBusinessRouter(PrivateGroup)
 		adminRouter.InitCouponRouter(PrivateGroup)
 		adminRouter.InitUserTaskRouter(PrivateGroup)
+		adminRouter.InitAdvertiserRouter(PrivateGroup)
+		adminRouter.InitAdRouter(PrivateGroup)
+
 	}
 
 	global.GVA_LOG.Info("router register success")

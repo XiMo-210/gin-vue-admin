@@ -11,4 +11,6 @@ type RouterGroup struct {
 	BusinessRouter
 	CouponRouter
 	UserTaskRouter
+	AdvertiserRouter
+	AdRouter
 }

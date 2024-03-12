@@ -11,4 +11,6 @@ type ApiGroup struct {
 	BusinessApi
 	CouponApi
 	UserTaskApi
+	AdvertiserApi
+	AdApi
 }
