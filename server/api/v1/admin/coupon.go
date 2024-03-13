@@ -154,7 +154,7 @@ func (couponApi *CouponApi) GetCouponList(c *gin.Context) {
 	}
 
 	claims, _ := c.Get("claims")
-	customClaims, _ := claims.(request.CustomClaims)
+	customClaims, _ := claims.(*request.CustomClaims)
 
 	business, err := businessService.GetBusiness(customClaims.BaseClaims.ID)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
