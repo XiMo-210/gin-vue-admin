@@ -12,6 +12,7 @@ import (
 	"gorm.io/gorm"
 	"mime/multipart"
 	"strings"
+	"time"
 )
 
 type SysExportTemplateService struct {
@@ -237,6 +238,8 @@ func (sysExportTemplateService *SysExportTemplateService) ImportExcel(templateID
 				key := titleKeyMap[excelTitle[ii]]
 				item[key] = value
 			}
+			item["created_at"] = time.Now()
+			item["updated_at"] = time.Now()
 			cErr := tx.Table(template.TableName).Create(&item).Error
 			if cErr != nil {
 				return cErr
