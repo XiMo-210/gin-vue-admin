@@ -13,4 +13,5 @@ type RouterGroup struct {
 	UserTaskRouter
 	AdvertiserRouter
 	AdRouter
+	ReviewRecordsRouter
 }

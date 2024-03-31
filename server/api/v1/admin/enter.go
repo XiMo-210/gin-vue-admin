@@ -13,4 +13,5 @@ type ApiGroup struct {
 	UserTaskApi
 	AdvertiserApi
 	AdApi
+	ReviewRecordsApi
 }
