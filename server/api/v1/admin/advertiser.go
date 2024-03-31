@@ -5,6 +5,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -31,6 +32,10 @@ func (advertiserApi *AdvertiserApi) CreateAdvertiser(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+
+	claims, _ := c.Get("claims")
+	customClaims, _ := claims.(*request.CustomClaims)
+	advertiser.SysUserId = customClaims.BaseClaims.ID
 
 	if err := advertiserService.CreateAdvertiser(&advertiser); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Error(err))
@@ -112,10 +117,12 @@ func (advertiserApi *AdvertiserApi) UpdateAdvertiser(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
 // @Router /advertiser/findAdvertiser [get]
 func (advertiserApi *AdvertiserApi) FindAdvertiser(c *gin.Context) {
-	ID := c.Query("ID")
-	if readvertiser, err := advertiserService.GetAdvertiser(ID); err != nil {
-		global.GVA_LOG.Error("查询失败!", zap.Error(err))
-		response.FailWithMessage("查询失败", c)
+	claims, _ := c.Get("claims")
+	customClaims, _ := claims.(*request.CustomClaims)
+
+	if readvertiser, err := advertiserService.GetAdvertiser(customClaims.BaseClaims.ID); err != nil {
+		global.GVA_LOG.Error("未完善广告主信息!", zap.Error(err))
+		response.FailWithMessage("未完善广告主信息", c)
 	} else {
 		response.OkWithData(gin.H{"readvertiser": readvertiser}, c)
 	}

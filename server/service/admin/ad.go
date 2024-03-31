@@ -4,6 +4,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
+	"time"
 )
 
 type AdService struct {
@@ -46,11 +47,11 @@ func (adService *AdService) GetAd(ID string) (ad admin.Ad, err error) {
 
 // GetAdInfoList 分页获取广告记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (adService *AdService) GetAdInfoList(info adminReq.AdSearch) (list []admin.Ad, total int64, err error) {
+func (adService *AdService) GetAdInfoList(info adminReq.AdSearch, advertiserId uint) (list []admin.Ad, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&admin.Ad{})
+	db := global.GVA_DB.Model(&admin.Ad{}).Where(&admin.Ad{AdvertiserId: advertiserId})
 	var ads []admin.Ad
 	// 如果有条件搜索 下方会自动创建搜索语句
 	if info.StartCreatedAt != nil && info.EndCreatedAt != nil {
@@ -58,6 +59,9 @@ func (adService *AdService) GetAdInfoList(info adminReq.AdSearch) (list []admin.
 	}
 	if info.Name != "" {
 		db = db.Where("name = ?", info.Name)
+	}
+	if info.AdCategory != nil {
+		db = db.Where("ad_category = ?", info.AdCategory)
 	}
 	if info.CostCategory != nil {
 		db = db.Where("cost_category = ?", info.CostCategory)
@@ -88,4 +92,17 @@ func (adService *AdService) GetAdInfoList(info adminReq.AdSearch) (list []admin.
 
 	err = db.Find(&ads).Error
 	return ads, total, err
+}
+
+func (adService *AdService) UpdateAdStatus() (err error) {
+	if err = global.GVA_DB.Model(&admin.Ad{}).Where("end_date < ? AND status <> 4", time.Now()).Update("status", 3).Error; err != nil {
+		return err
+	}
+	if err = global.GVA_DB.Model(&admin.Ad{}).Where("cost_category = 1 AND buy_amount = cost_impressions").Update("status", 4).Error; err != nil {
+		return err
+	}
+	if err = global.GVA_DB.Model(&admin.Ad{}).Where("cost_category = 2 AND buy_amount = cost_clicks").Update("status", 4).Error; err != nil {
+		return err
+	}
+	return nil
 }

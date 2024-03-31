@@ -39,8 +39,8 @@ func (advertiserService *AdvertiserService) UpdateAdvertiser(advertiser admin.Ad
 
 // GetAdvertiser 根据ID获取广告主记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (advertiserService *AdvertiserService) GetAdvertiser(ID string) (advertiser admin.Advertiser, err error) {
-	err = global.GVA_DB.Where("id = ?", ID).First(&advertiser).Error
+func (advertiserService *AdvertiserService) GetAdvertiser(sysUserId uint) (advertiser admin.Advertiser, err error) {
+	err = global.GVA_DB.Where("sys_user_id = ?", sysUserId).First(&advertiser).Error
 	return
 }
 

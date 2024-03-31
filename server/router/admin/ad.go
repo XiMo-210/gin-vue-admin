@@ -21,7 +21,8 @@ func (s *AdRouter) InitAdRouter(Router *gin.RouterGroup) {
 		adRouter.PUT("updateAd", adApi.UpdateAd)              // 更新广告
 	}
 	{
-		adRouterWithoutRecord.GET("findAd", adApi.FindAd)       // 根据ID获取广告
-		adRouterWithoutRecord.GET("getAdList", adApi.GetAdList) // 获取广告列表
+		adRouterWithoutRecord.GET("findAd", adApi.FindAd)                   // 根据ID获取广告
+		adRouterWithoutRecord.GET("getAdList", adApi.GetAdList)             // 获取广告列表
+		adRouterWithoutRecord.GET("getKeywordStats", adApi.GetKeywordStats) // 获取关键词统计情况
 	}
 }
