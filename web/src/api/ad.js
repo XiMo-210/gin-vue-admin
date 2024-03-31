@@ -95,3 +95,11 @@ export const getAdList = (params) => {
     params
   })
 }
+
+export const getKeywordStats = (params) => {
+  return service({
+    url: '/ad/getKeywordStats',
+    method: 'get',
+    params
+  })
+}
