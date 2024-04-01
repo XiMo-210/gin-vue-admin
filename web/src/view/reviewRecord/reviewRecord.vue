@@ -1,201 +1,540 @@
 <template>
   <div>
     <div class="gva-search-box">
-      <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-      <el-form-item label="创建日期" prop="createdAt">
-      <template #label>
-        <span>
-          创建日期
-          <el-tooltip content="搜索范围是开始日期（包含）至结束日期（不包含）">
-            <el-icon><QuestionFilled /></el-icon>
-          </el-tooltip>
-        </span>
-      </template>
-      <el-date-picker v-model="searchInfo.startCreatedAt" type="datetime" placeholder="开始日期" :disabled-date="time=> searchInfo.endCreatedAt ? time.getTime() > searchInfo.endCreatedAt.getTime() : false"></el-date-picker>
-       —
-      <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
-      </el-form-item>
-      
-        <el-form-item label="状态" prop="status">
-            
-             <el-input v-model.number="searchInfo.status" placeholder="搜索条件" />
-
+      <el-form
+        ref="elSearchFormRef"
+        :inline="true"
+        :model="searchInfo"
+        class="demo-form-inline"
+        @keyup.enter="onSubmit"
+      >
+        <el-form-item
+          label="用户名"
+          prop="username"
+        >
+          <el-input
+            v-model.number="searchInfo.username"
+            placeholder="用户名"
+            style="width: 140px"
+          />
+        </el-form-item>
+        <el-form-item
+          label="任务类型"
+          prop="category"
+        >
+          <el-select
+            v-model.number="searchInfo.category"
+            clearable
+            placeholder="请选择"
+            style="width: 120px"
+          >
+            <el-option
+              key="main"
+              label="主线任务"
+              :value="1"
+            />
+            <el-option
+              key="side"
+              label="支线任务"
+              :value="2"
+            />
+            <el-option
+              key="hide"
+              label="隐藏任务"
+              :value="3"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="任务名称"
+          prop="taskTitle"
+        >
+          <el-input
+            v-model.number="searchInfo.taskTitle"
+            placeholder="任务名称"
+            style="width: 140px"
+          />
+        </el-form-item>
+        <el-form-item
+          label="状态"
+          prop="status"
+        >
+          <el-select
+            v-model.number="searchInfo.status"
+            clearable
+            placeholder="请选择"
+            style="width: 120px"
+          >
+            <el-option
+              key="notreview"
+              label="未审核"
+              :value="1"
+            />
+            <el-option
+              key="pass"
+              label="通过"
+              :value="2"
+            />
+            <el-option
+              key="reject"
+              label="驳回"
+              :value="3"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="search" @click="onSubmit">查询</el-button>
-          <el-button icon="refresh" @click="onReset">重置</el-button>
+          <el-button
+            type="primary"
+            icon="search"
+            @click="onSubmit"
+          >查询</el-button>
+          <el-button
+            icon="refresh"
+            @click="onReset"
+          >重置</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="gva-table-box">
-        <div class="gva-btn-list">
-            <el-button type="primary" icon="plus" @click="openDialog">新增</el-button>
-            <el-popover v-model:visible="deleteVisible" :disabled="!multipleSelection.length" placement="top" width="160">
-            <p>确定要删除吗？</p>
-            <div style="text-align: right; margin-top: 8px;">
-                <el-button type="primary" link @click="deleteVisible = false">取消</el-button>
-                <el-button type="primary" @click="onDelete">确定</el-button>
-            </div>
-            <template #reference>
-                <el-button icon="delete" style="margin-left: 10px;" :disabled="!multipleSelection.length" @click="deleteVisible = true">删除</el-button>
-            </template>
-            </el-popover>
-        </div>
-        <el-table
+      <el-table
         ref="multipleTable"
         style="width: 100%"
         tooltip-effect="dark"
         :data="tableData"
         row-key="ID"
-        @selection-change="handleSelectionChange"
+        :header-cell-style="{ 'text-align': 'center' }"
+        :cell-style="{ textAlign: 'center' }"
+      >
+        <el-table-column
+          label="申请日期"
+          width="180"
         >
-        <el-table-column type="selection" width="55" />
-        
-        <el-table-column align="left" label="日期" width="180">
-            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
+          <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
-        
-        <el-table-column align="left" label="用户任务记录ID" prop="userTaskId" width="120" />
-        <el-table-column align="left" label="阶段" prop="stage" width="120" />
-          <el-table-column label="图片" width="200">
-              <template #default="scope">
-                <el-image style="width: 100px; height: 100px" :src="getUrl(scope.row.pic)" fit="cover"/>
-              </template>
-          </el-table-column>
-        <el-table-column align="left" label="回应" prop="reply" width="120" />
-        <el-table-column align="left" label="状态" prop="status" width="120" />
-        <el-table-column align="left" label="操作" fixed="right" min-width="240">
-            <template #default="scope">
-            <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
-                <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
-                查看详情
-            </el-button>
-            <el-button type="primary" link icon="edit" class="table-button" @click="updateReviewRecordsFunc(scope.row)">变更</el-button>
-            <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
-            </template>
+        <el-table-column
+          label="用户名"
+          prop="username"
+          width="120"
+        />
+        <el-table-column
+          label="任务类型"
+          prop="category"
+          width="120"
+        >
+          <template #default="scope">
+            {{ formatCategory(scope.row.category) }}
+          </template>
         </el-table-column>
-        </el-table>
-        <div class="gva-pagination">
-            <el-pagination
-            layout="total, sizes, prev, pager, next, jumper"
-            :current-page="page"
-            :page-size="pageSize"
-            :page-sizes="[10, 30, 50, 100]"
-            :total="total"
-            @current-change="handleCurrentChange"
-            @size-change="handleSizeChange"
-            />
-        </div>
+        <el-table-column
+          label="任务名称"
+          prop="taskTitle"
+          width="160"
+          show-overflow-tooltip="true"
+        />
+        <el-table-column
+          label="任务阶段名称"
+          prop="taskStageTitle"
+          width="160"
+          show-overflow-tooltip="true"
+        />
+        <el-table-column
+          label="任务截止时间"
+          width="180"
+        >
+          <template #default="scope">{{ formatDate(scope.row.endTime) }}</template>
+        </el-table-column>
+        <el-table-column
+          label="状态"
+          prop="status"
+          width="120"
+        >
+          <template #default="scope">
+            {{ formatStatus(scope.row.status) }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          fixed="right"
+          min-width="240"
+        >
+          <template #default="scope">
+            <el-button
+              type="primary"
+              link
+              icon="edit"
+              class="table-button"
+              @click="updateReviewRecordsFunc(scope.row)"
+            >{{ scope.row.status===1? '审核':'查看' }}</el-button>
+            <el-button
+              type="primary"
+              link
+              icon="delete"
+              @click="deleteRow(scope.row)"
+            >删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="gva-pagination">
+        <el-pagination
+          layout="total, sizes, prev, pager, next, jumper"
+          :current-page="page"
+          :page-size="pageSize"
+          :page-sizes="[10, 30, 50, 100]"
+          :total="total"
+          @current-change="handleCurrentChange"
+          @size-change="handleSizeChange"
+        />
+      </div>
     </div>
-    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
-      <el-scrollbar height="500px">
-          <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="用户任务记录ID:"  prop="userTaskId" >
-              <el-input v-model.number="formData.userTaskId" :clearable="true" placeholder="请输入用户任务记录ID" />
-            </el-form-item>
-            <el-form-item label="阶段:"  prop="stage" >
-              <el-input v-model.number="formData.stage" :clearable="true" placeholder="请输入阶段" />
-            </el-form-item>
-            <el-form-item label="图片:"  prop="pic" >
-                <SelectImage
-                 v-model="formData.pic"
-                 file-type="image"
-                />
-            </el-form-item>
-            <el-form-item label="回应:"  prop="reply" >
-              <el-input v-model="formData.reply" :clearable="true"  placeholder="请输入回应" />
-            </el-form-item>
-            <el-form-item label="状态:"  prop="status" >
-              <el-input v-model.number="formData.status" :clearable="true" placeholder="请输入状态" />
-            </el-form-item>
-          </el-form>
+    <el-dialog
+      v-model="dialogFormVisible"
+      :before-close="closeDialog"
+      title="审核"
+      align-center
+      destroy-on-close
+    >
+      <el-scrollbar>
+        <el-form
+          ref="elFormRef"
+          :inline="true"
+          :model="formData"
+          label-position="right"
+        ><el-collapse>
+           <el-collapse-item>
+             <template #title>
+               <el-text
+                 tag="b"
+                 size="large"
+               >
+                 {{ "任务类型: "+formatCategory( formData.category ) }}
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                 {{ "任务名称: "+formData.taskTitle }}
+               </el-text>
+             </template>
+             <el-form-item
+               label="任务校区:"
+               prop="campus"
+               style="width: 40%;"
+             >
+               <el-select
+                 v-model="formData.campus"
+                 disabled
+               >
+                 <el-option
+                   key="all"
+                   value="全部"
+                 />
+                 <el-option
+                   key="zh"
+                   value="朝晖校区"
+                 />
+                 <el-option
+                   key="pf"
+                   value="屏峰校区"
+                 />
+                 <el-option
+                   key="mgs"
+                   value="莫干山校区"
+                 />
+               </el-select>
+             </el-form-item>
+             <el-form-item
+               label="任务学院:"
+               prop="college"
+               style="width: 40%;"
+             >
+               <el-input
+                 v-model="formData.college"
+                 disabled
+               />
+             </el-form-item>
+             <el-form-item
+               label="开始时间:"
+               prop="startTime"
+               style="width: 30%;"
+             >
+               <el-date-picker
+                 v-model="formData.startTime"
+                 type="date"
+                 disabled
+                 :clearable="true"
+               />
+             </el-form-item>
+             <el-form-item
+               label="结束时间:"
+               prop="endTime"
+               style="width: 30%;"
+             >
+               <el-date-picker
+                 v-model="formData.endTime"
+                 type="date"
+                 disabled
+                 :clearable="true"
+               />
+             </el-form-item>
+             <el-form-item
+               label="任务描述:"
+               prop="taskDesc"
+               style="width: 80%;"
+             >
+               <el-input
+                 v-model="formData.taskDesc"
+                 disabled
+                 :autosize="{minRows:2,maxRows:4}"
+                 type="textarea"
+               />
+             </el-form-item>
+           </el-collapse-item>
+           <el-collapse-item>
+             <template #title>
+               <el-text
+                 tag="b"
+                 size="large"
+               >{{ "阶段任务名称: "+formData.taskStageTitle }}
+               </el-text>
+             </template>
+             <el-form-item
+               v-show="formData.requiredItem"
+               label="所需物品:"
+               prop="requiredItem"
+               style="width: 40%;"
+             >
+               <el-input
+                 v-model="formData.requiredItem"
+                 disabled
+               />
+             </el-form-item>
+             <p />
+             <el-form-item
+               label="阶段任务描述:"
+               :prop="'desc'"
+               style="width: 80%;"
+             >
+               <el-input
+                 v-model="formData.taskStageDesc"
+                 disabled
+                 :autosize="{minRows:1,maxRows:2}"
+                 type="textarea"
+               />
+             </el-form-item>
+             <el-form-item
+               v-show="formData.imgs.length"
+               label="图片描述:"
+               prop="imgs"
+             >
+               <span style="display: flex;flex-wrap: wrap; margin-top: 5px; margin-bottom: -20px;">
+                 <span
+                   v-for="(img, index) in formData.imgs"
+                   :key="index"
+                   style="position: relative; margin-right: 10px;"
+                 >
+                   <el-image
+                     :src="img"
+                     fit="contain"
+                     :zoom-rate="1.2"
+                     :max-scale="7"
+                     :min-scale="0.2"
+                     :preview-src-list="formData.imgs"
+                     :initial-index="index"
+                     style="width: 80px; height: 80px;"
+                   />
+                 </span>
+               </span>
+             </el-form-item>
+           </el-collapse-item>
+         </el-collapse>
+          <el-form-item
+            label="任务要求照片:"
+            prop="taskStagePic"
+            style="width: 28%;margin-top: 20px;"
+          >
+            <el-image
+              :src="formData.taskStagePic"
+              fit="fill"
+              :zoom-rate="1.2"
+              :max-scale="7"
+              :min-scale="0.2"
+              :preview-src-list="[formData.taskStagePic]"
+              :initial-index="0"
+              style="width: 130px; height: 130px;"
+            />
+          </el-form-item>
+          <el-form-item
+            v-show="formData.needFace"
+            label="需要用户人脸:"
+            prop="fill"
+            style="width: 28%;margin-top: 20px;"
+          >
+            <el-image
+              :src="formData.faceId"
+              fit="contain"
+              :zoom-rate="1.2"
+              :max-scale="7"
+              :min-scale="0.2"
+              :preview-src-list="[formData.faceId]"
+              :initial-index="0"
+              style="width: 130px; height: 130px;"
+            />
+          </el-form-item>
+          <el-form-item
+            label="用户提交照片:"
+            prop="fill"
+            style="width: 28%;margin-top: 20px;"
+          >
+            <el-image
+              :src="formData.pic"
+              fit="contain"
+              :zoom-rate="1.2"
+              :max-scale="7"
+              :min-scale="0.2"
+              :preview-src-list="[formData.pic]"
+              :initial-index="0"
+              style="width: 130px; height: 130px;"
+            />
+          </el-form-item>
+          <el-form-item
+            v-show="formData.status===3"
+            label="驳回原因"
+            style="width: 80%;"
+          >
+            <el-input
+              v-model="formData.reply"
+              disabled
+              :autosize="{minRows:1,maxRows:2}"
+              type="textarea"
+            />
+          </el-form-item>
+        </el-form>
       </el-scrollbar>
       <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="closeDialog">取 消</el-button>
-          <el-button type="primary" @click="enterDialog">确 定</el-button>
+        <div
+          v-if="formData.status===1"
+          class="dialog-footer"
+        >
+          <el-button
+            @click="closeDialog"
+          >取 消</el-button>
+          <el-button
+            type="danger"
+            @click="openRejectDialog"
+          >驳 回</el-button>
+          <el-button
+            type="success"
+            @click="enterDialog"
+          >通 过</el-button>
+        </div>
+        <div
+          v-else
+          class="dialog-footer"
+        >
+          <el-button
+            v-if="formData.status===2"
+            type="success"
+          >状态: 已通过</el-button>
+          <el-button
+            v-else-if="formData.status===3"
+            type="danger"
+          >状态: 已驳回</el-button>
         </div>
       </template>
     </el-dialog>
-
-    <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="查看详情" destroy-on-close>
-      <el-scrollbar height="550px">
-        <el-descriptions column="1" border>
-                <el-descriptions-item label="用户任务记录ID">
-                        {{ formData.userTaskId }}
-                </el-descriptions-item>
-                <el-descriptions-item label="阶段">
-                        {{ formData.stage }}
-                </el-descriptions-item>
-                <el-descriptions-item label="图片">
-                        <el-image style="width: 50px; height: 50px" :preview-src-list="ReturnArrImg(formData.pic)" :src="getUrl(formData.pic)" fit="cover" />
-                </el-descriptions-item>
-                <el-descriptions-item label="回应">
-                        {{ formData.reply }}
-                </el-descriptions-item>
-                <el-descriptions-item label="状态">
-                        {{ formData.status }}
-                </el-descriptions-item>
-        </el-descriptions>
-      </el-scrollbar>
+    <el-dialog
+      v-model="rejectDialogVisiable"
+      title="驳回"
+      :before-close="closeRejectDialog"
+      width="30%"
+      align-center
+      destroy-on-close
+    >
+      <el-form
+        ref="rejectRef"
+        :model="formData"
+        :rules="rule"
+      >
+        <el-form-item
+          prop="reply"
+          label="原因"
+        >
+          <el-input
+            v-model="formData.reply"
+            placeholder="请输入驳回原因"
+            :autosize="{minRows:2,maxRows:4}"
+            type="textarea"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span>
+          <el-button @click="closeRejectDialog">取消</el-button>
+          <el-button
+            type="primary"
+            @click="enterRejectDialog"
+          >确认</el-button>
+        </span>
+      </template>
     </el-dialog>
+
   </div>
 </template>
 
 <script setup>
 import {
-  createReviewRecords,
   deleteReviewRecords,
-  deleteReviewRecordsByIds,
   updateReviewRecords,
   findReviewRecords,
   getReviewRecordsList
 } from '@/api/reviewRecord'
-import { getUrl } from '@/utils/image'
-// 图片选择组件
-import SelectImage from '@/components/selectImage/selectImage.vue'
 
 // 全量引入格式化工具 请按需保留
-import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
+import { formatDate } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 
 defineOptions({
-    name: 'ReviewRecords'
+  name: 'ReviewRecords'
+})
+
+// 验证规则
+const rule = reactive({
+  'reply': [{
+    required: true,
+    message: '',
+    trigger: ['input', 'blur'],
+  },
+  {
+    whitespace: true,
+    message: '不能只输入空格',
+    trigger: ['input', 'blur'],
+  }
+  ],
 })
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
-        userTaskId: 0,
-        stage: 0,
-        pic: "",
-        reply: '',
-        status: 0,
-        })
-
-
-// 验证规则
-const rule = reactive({
-})
-
-const searchRule = reactive({
-  createdAt: [
-    { validator: (rule, value, callback) => {
-      if (searchInfo.value.startCreatedAt && !searchInfo.value.endCreatedAt) {
-        callback(new Error('请填写结束日期'))
-      } else if (!searchInfo.value.startCreatedAt && searchInfo.value.endCreatedAt) {
-        callback(new Error('请填写开始日期'))
-      } else if (searchInfo.value.startCreatedAt && searchInfo.value.endCreatedAt && (searchInfo.value.startCreatedAt.getTime() === searchInfo.value.endCreatedAt.getTime() || searchInfo.value.startCreatedAt.getTime() > searchInfo.value.endCreatedAt.getTime())) {
-        callback(new Error('开始日期应当早于结束日期'))
-      } else {
-        callback()
-      }
-    }, trigger: 'change' }
-  ],
+  username: '',
+  faceId: 0,
+  category: 0,
+  taskTitle: '',
+  taskDesc: '',
+  campus: '',
+  college: '',
+  startTime: new Date(),
+  endTime: new Date(),
+  taskStageTitle: '',
+  taskStageDesc: '',
+  requiredItem: '',
+  imgs: [],
+  needFace: false,
+  taskStagePic: '',
+  stage: 0,
+  pic: '',
+  reply: '',
+  status: 0,
 })
 
 const elFormRef = ref()
 const elSearchFormRef = ref()
+const rejectRef = ref()
 
 // =========== 表格控制部分 ===========
 const page = ref(1)
@@ -248,174 +587,128 @@ getTableData()
 // ============== 表格控制部分结束 ===============
 
 // 获取需要的字典 可能为空 按需保留
-const setOptions = async () =>{
+const setOptions = async() => {
 }
 
 // 获取需要的字典 可能为空 按需保留
 setOptions()
 
-
-// 多选数据
-const multipleSelection = ref([])
-// 多选
-const handleSelectionChange = (val) => {
-    multipleSelection.value = val
-}
-
 // 删除行
 const deleteRow = (row) => {
-    ElMessageBox.confirm('确定要删除吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-    }).then(() => {
-            deleteReviewRecordsFunc(row)
-        })
-    }
-
-
-// 批量删除控制标记
-const deleteVisible = ref(false)
-
-// 多选删除
-const onDelete = async() => {
-      const IDs = []
-      if (multipleSelection.value.length === 0) {
-        ElMessage({
-          type: 'warning',
-          message: '请选择要删除的数据'
-        })
-        return
-      }
-      multipleSelection.value &&
-        multipleSelection.value.map(item => {
-          IDs.push(item.ID)
-        })
-      const res = await deleteReviewRecordsByIds({ IDs })
-      if (res.code === 0) {
-        ElMessage({
-          type: 'success',
-          message: '删除成功'
-        })
-        if (tableData.value.length === IDs.length && page.value > 1) {
-          page.value--
-        }
-        deleteVisible.value = false
-        getTableData()
-      }
-    }
-
-// 行为控制标记（弹窗内部需要增还是改）
-const type = ref('')
+  ElMessageBox.confirm('确定要删除吗?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    deleteReviewRecordsFunc(row)
+  })
+}
 
 // 更新行
 const updateReviewRecordsFunc = async(row) => {
-    const res = await findReviewRecords({ ID: row.ID })
-    type.value = 'update'
-    if (res.code === 0) {
-        formData.value = res.data.rereviewRecord
-        dialogFormVisible.value = true
-    }
+  const res = await findReviewRecords({ ID: row.ID })
+  if (res.code === 0) {
+    formData.value = res.data.rereviewRecord
+    dialogFormVisible.value = true
+  }
 }
 
-
 // 删除行
-const deleteReviewRecordsFunc = async (row) => {
-    const res = await deleteReviewRecords({ ID: row.ID })
-    if (res.code === 0) {
-        ElMessage({
-                type: 'success',
-                message: '删除成功'
-            })
-            if (tableData.value.length === 1 && page.value > 1) {
-            page.value--
-        }
-        getTableData()
+const deleteReviewRecordsFunc = async(row) => {
+  const res = await deleteReviewRecords({ ID: row.ID })
+  if (res.code === 0) {
+    ElMessage({
+      type: 'success',
+      message: '删除成功'
+    })
+    if (tableData.value.length === 1 && page.value > 1) {
+      page.value--
     }
+    getTableData()
+  }
 }
 
 // 弹窗控制标记
 const dialogFormVisible = ref(false)
 
-
-// 查看详情控制标记
-const detailShow = ref(false)
-
-
-// 打开详情弹窗
-const openDetailShow = () => {
-  detailShow.value = true
+// 关闭弹窗
+const closeDialog = () => {
+  dialogFormVisible.value = false
 }
 
+// 弹窗确定
+const enterDialog = async() => {
+  elFormRef.value?.validate(async(valid) => {
+    if (!valid) return
+    formData.value.status = 2
+    const res = await updateReviewRecords(formData.value)
+    if (res.code === 0) {
+      ElMessage({
+        type: 'success',
+        message: '通过'
+      })
+      closeDialog()
+      getTableData()
+    } else {
+      formData.value.status = 1
+    }
+  })
+}
 
-// 打开详情
-const getDetails = async (row) => {
-  // 打开弹窗
-  const res = await findReviewRecords({ ID: row.ID })
-  if (res.code === 0) {
-    formData.value = res.data.rereviewRecord
-    openDetailShow()
+const rejectDialogVisiable = ref(false)
+
+const openRejectDialog = () => {
+  rejectDialogVisiable.value = true
+}
+
+const closeRejectDialog = () => {
+  rejectDialogVisiable.value = false
+}
+
+const enterRejectDialog = async() => {
+  rejectRef.value?.validate(async(valid) => {
+    if (!valid) return
+    formData.value.status = 3
+    const res = await updateReviewRecords(formData.value)
+    if (res.code === 0) {
+      ElMessage({
+        type: 'success',
+        message: '驳回'
+      })
+      closeRejectDialog()
+      closeDialog()
+      getTableData()
+    } else {
+      formData.value.status = 1
+      closeRejectDialog()
+    }
+  })
+}
+
+const formatCategory = (category) => {
+  switch (category) {
+    case 1:
+      return '主线任务'
+    case 2:
+      return '支线任务'
+    case 3:
+      return '隐藏任务'
   }
 }
 
-
-// 关闭详情弹窗
-const closeDetailShow = () => {
-  detailShow.value = false
-  formData.value = {
-          userTaskId: 0,
-          stage: 0,
-          reply: '',
-          status: 0,
-          }
-}
-
-
-// 打开弹窗
-const openDialog = () => {
-    type.value = 'create'
-    dialogFormVisible.value = true
-}
-
-// 关闭弹窗
-const closeDialog = () => {
-    dialogFormVisible.value = false
-    formData.value = {
-        userTaskId: 0,
-        stage: 0,
-        reply: '',
-        status: 0,
-        }
-}
-// 弹窗确定
-const enterDialog = async () => {
-     elFormRef.value?.validate( async (valid) => {
-             if (!valid) return
-              let res
-              switch (type.value) {
-                case 'create':
-                  res = await createReviewRecords(formData.value)
-                  break
-                case 'update':
-                  res = await updateReviewRecords(formData.value)
-                  break
-                default:
-                  res = await createReviewRecords(formData.value)
-                  break
-              }
-              if (res.code === 0) {
-                ElMessage({
-                  type: 'success',
-                  message: '创建/更改成功'
-                })
-                closeDialog()
-                getTableData()
-              }
-      })
+const formatStatus = (status) => {
+  switch (status) {
+    case 1:
+      return '未审核'
+    case 2:
+      return '通过'
+    case 3:
+      return '驳回'
+  }
 }
 
 </script>
 
-<style>
+  <style>
 
-</style>
+  </style>
