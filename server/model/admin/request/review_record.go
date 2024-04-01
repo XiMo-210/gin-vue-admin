@@ -2,13 +2,12 @@ package request
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
-	"time"
 )
 
 type ReviewRecordsSearch struct {
-	StartCreatedAt *time.Time `json:"startCreatedAt" form:"startCreatedAt"`
-	EndCreatedAt   *time.Time `json:"endCreatedAt" form:"endCreatedAt"`
-
-	Status *int `json:"status" form:"status" `
+	Username  string `form:"username"`
+	Category  *int   `form:"category"`
+	TaskTitle string `form:"taskTitle"`
+	Status    *int   `json:"status" form:"status" `
 	request.PageInfo
 }

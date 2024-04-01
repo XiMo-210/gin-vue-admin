@@ -8,6 +8,8 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"strconv"
+	"time"
 )
 
 type ReviewRecordsApi struct {
@@ -91,6 +93,30 @@ func (reviewRecordApi *ReviewRecordsApi) UpdateReviewRecords(c *gin.Context) {
 	err := c.ShouldBindJSON(&reviewRecord)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	userTask, err := userTaskService.GetUserTask(strconv.Itoa(*reviewRecord.UserTaskId))
+	if err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	if userTask.CurStage != reviewRecord.Stage {
+		response.FailWithMessage("用户已完成该阶段, 可删除该申请记录", c)
+		return
+	}
+
+	task, err := taskService.GetTask(strconv.Itoa(int(userTask.ID)))
+	if err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	if task.EndTime.Before(time.Now()) {
+		response.FailWithMessage("任务时间已截至, 可删除该申请记录", c)
 		return
 	}
 
