@@ -1,6 +1,7 @@
 package global
 
 import (
+	"github.com/ArtisanCloud/PowerWeChat/v3/src/miniProgram"
 	"github.com/qiniu/qmgo"
 	"sync"
 
@@ -32,6 +33,8 @@ var (
 
 	BlackCache local_cache.Cache
 	lock       sync.RWMutex
+
+	MiniProgram *miniProgram.MiniProgram
 )
 
 // GetGlobalDBByDBName 通过名称获取db list中的db

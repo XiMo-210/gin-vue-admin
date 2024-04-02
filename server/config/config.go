@@ -29,4 +29,7 @@ type Server struct {
 
 	// 跨域配置
 	Cors CORS `mapstructure:"cors" json:"cors" yaml:"cors"`
+
+	// 小程序
+	MiniProgram MiniProgram `mapstructure:"mini_program"`
 }
