@@ -103,12 +103,19 @@ func (reviewRecordApi *ReviewRecordsApi) UpdateReviewRecords(c *gin.Context) {
 		return
 	}
 
-	if userTask.CurStage != reviewRecord.Stage {
+	if *userTask.CurStage != *reviewRecord.Stage {
 		response.FailWithMessage("用户已完成该阶段, 可删除该申请记录", c)
 		return
 	}
 
-	task, err := taskService.GetTask(strconv.Itoa(int(userTask.ID)))
+	user, err := wxUserService.GetWxUser(strconv.Itoa(*userTask.UserId))
+	if err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	task, err := taskService.GetTask(strconv.Itoa(*userTask.TaskId))
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
@@ -118,6 +125,56 @@ func (reviewRecordApi *ReviewRecordsApi) UpdateReviewRecords(c *gin.Context) {
 	if task.EndTime.Before(time.Now()) {
 		response.FailWithMessage("任务时间已截至, 可删除该申请记录", c)
 		return
+	}
+
+	if *reviewRecord.Status == 2 {
+		taskStages, err := taskService.GetTaskStages(strconv.Itoa(int(task.ID)))
+		if err != nil {
+			global.GVA_LOG.Error("获取失败!", zap.Error(err))
+			response.FailWithMessage("获取失败", c)
+			return
+		}
+
+		userTask.Pic = reviewRecord.Pic
+		userTask.Loc = reviewRecord.Loc
+		*userTask.CurStage++
+
+		if len(taskStages) < *userTask.CurStage {
+			*user.CurTask = 0
+			*user.Exp += *task.Reward
+			*user.Points += *task.Reward
+			err := wxUserService.UpdateWxUser(user)
+			if err != nil {
+				global.GVA_LOG.Error("更新失败!", zap.Error(err))
+				response.FailWithMessage("更新失败", c)
+				return
+			}
+
+			*userTask.CurStage = 0
+
+			err = taskService.UpdateTaskCompletionCounts(user.ID)
+			if err != nil {
+				global.GVA_LOG.Error("Redis更新失败!", zap.Error(err))
+				response.FailWithMessage("Redis更新失败", c)
+				return
+			}
+		}
+
+		err = userTaskService.UpdateUserTask(userTask)
+		if err != nil {
+			global.GVA_LOG.Error("更新失败!", zap.Error(err))
+			response.FailWithMessage("更新失败", c)
+			return
+		}
+
+		if *task.Category == 1 {
+			err = taskService.UpdateMainTaskProgress(user.ID)
+			if err != nil {
+				global.GVA_LOG.Error("Redis更新失败!", zap.Error(err))
+				response.FailWithMessage("Redis更新失败", c)
+				return
+			}
+		}
 	}
 
 	if err := reviewRecordService.UpdateReviewRecords(reviewRecord); err != nil {
