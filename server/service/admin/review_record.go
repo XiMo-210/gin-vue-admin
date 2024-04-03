@@ -46,7 +46,7 @@ func (reviewRecordService *ReviewRecordsService) GetReviewRecords(ID string) (re
 		Joins("JOIN user_tasks ON review_records.user_task_id = user_tasks.id").
 		Joins("JOIN wx_users ON wx_users.id = user_tasks.user_id").
 		Joins("JOIN tasks ON tasks.id = user_tasks.task_id").
-		Joins("JOIN task_stages ON task_stages.task_id = tasks.id AND task_stages.stage = review_records.stage AND task_stages.deleted_at IS NOT NULL").
+		Joins("JOIN task_stages ON task_stages.task_id = tasks.id AND task_stages.stage = review_records.stage AND task_stages.deleted_at IS NULL").
 		Where("review_records.id = ?", ID).First(&reviewRecord).Error
 
 	return
