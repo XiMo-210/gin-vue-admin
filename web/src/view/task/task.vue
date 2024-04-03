@@ -371,9 +371,10 @@
             prop="task.reward"
             style="width: 40%;"
           >
-            <el-input
-              v-model.number="taskWithStagesformData.task.reward"
-              placeholder="请输入奖励积分"
+            <el-input-number
+              v-model="taskWithStagesformData.task.reward"
+              controls-position="right"
+              :step="10"
             />
           </el-form-item>
           <el-form-item
@@ -565,6 +566,13 @@
                       style="margin-left: 80px;"
                     />
                   </el-form-item>
+                  <el-form-item
+                    v-show="!taskStage.pic"
+                  >
+                    <el-text>
+                      如果需要指定图片请上传
+                    </el-text>
+                  </el-form-item>
                 </span>
                 <p />
                 <el-form-item
@@ -615,7 +623,52 @@
                     disabled
                   />
                 </el-form-item>
-
+                <el-form-item
+                  label="允许距离:"
+                  :prop="'allowDist'+index"
+                  style="width: 25%;"
+                >
+                  <el-select
+                    v-model.number="taskStage.allowDist"
+                    placeholder="请选择"
+                  >
+                    <el-option
+                      key="0"
+                      label="无限制"
+                      :value="0"
+                    />
+                    <el-option
+                      key="10"
+                      label="10米"
+                      :value="10"
+                    />
+                    <el-option
+                      key="50"
+                      label="50米"
+                      :value="50"
+                    />
+                    <el-option
+                      key="100"
+                      label="100米"
+                      :value="100"
+                    />
+                    <el-option
+                      key="300"
+                      label="300米"
+                      :value="300"
+                    />
+                    <el-option
+                      key="500"
+                      label="500米"
+                      :value="500"
+                    />
+                    <el-option
+                      key="1000"
+                      label="1000米"
+                      :value="1000"
+                    />
+                  </el-select>
+                </el-form-item>
               </span>
               <el-divider style="margin: 0px 0px;top: -10px;" />
             </div>
