@@ -11,8 +11,14 @@ func MiniProgram() {
 	mpCfg := global.GVA_CONFIG.MiniProgram
 	redisCfg := global.GVA_CONFIG.Redis
 	MiniProgramApp, err := miniProgram.NewMiniProgram(&miniProgram.UserConfig{
-		AppID:  mpCfg.Appid,  // 小程序 appid
-		Secret: mpCfg.Secret, // 小程序 secret
+		AppID:     mpCfg.Appid,  // 小程序 appid
+		Secret:    mpCfg.Secret, // 小程序 secret
+		HttpDebug: mpCfg.HttpDebug,
+		Log: miniProgram.Log{
+			Level: mpCfg.LogLevel,
+			File:  mpCfg.LogInfoFile,
+			Error: mpCfg.LogErrorFile,
+		},
 		Cache: kernel.NewRedisClient(&kernel.UniversalOptions{
 			Addrs:    []string{redisCfg.Addr},
 			Password: redisCfg.Password,

@@ -1,6 +1,9 @@
 package admin
 
 import (
+	"context"
+	"github.com/ArtisanCloud/PowerWeChat/v3/src/basicService/subscribeMessage/request"
+	"github.com/ArtisanCloud/PowerWeChat/v3/src/kernel/power"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
@@ -127,14 +130,16 @@ func (reviewRecordApi *ReviewRecordsApi) UpdateReviewRecords(c *gin.Context) {
 		return
 	}
 
-	if *reviewRecord.Status == 2 {
-		taskStages, err := taskService.GetTaskStages(strconv.Itoa(int(task.ID)))
-		if err != nil {
-			global.GVA_LOG.Error("获取失败!", zap.Error(err))
-			response.FailWithMessage("获取失败", c)
-			return
-		}
+	taskStages, err := taskService.GetTaskStages(strconv.Itoa(int(task.ID)))
+	if err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
 
+	taskStage := taskStages[*userTask.CurStage-1]
+
+	if *reviewRecord.Status == 2 {
 		userTask.Pic = reviewRecord.Pic
 		userTask.Loc = reviewRecord.Loc
 		*userTask.CurStage++
@@ -181,6 +186,49 @@ func (reviewRecordApi *ReviewRecordsApi) UpdateReviewRecords(c *gin.Context) {
 		global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
 	} else {
+		var status string
+		if *reviewRecord.Status == 2 {
+			status = "通过"
+		} else {
+			status = "驳回"
+		}
+		data := &power.HashMap{
+			// 任务名称
+			"thing20": power.StringMap{
+				"value": task.Title,
+			},
+			// 审核内容
+			"thing2": power.StringMap{
+				"value": "阶段任务 " + taskStage.Title + " 图片审核",
+			},
+			// 审核结果
+			"phrase1": power.StringMap{
+				"value": status,
+			},
+			// 驳回原因
+			"thing51": power.StringMap{
+				"value": reviewRecord.Reply,
+			},
+			// 审核时间
+			"date3": power.StringMap{
+				"value": reviewRecord.UpdatedAt.Format("2006-01-02 15:04"),
+			},
+		}
+
+		mpResp, err := global.MiniProgram.SubscribeMessage.Send(context.Background(), &request.RequestSubscribeMessageSend{
+			ToUser:           user.Openid,
+			TemplateID:       "tfmRn9iQCGCUOOJnMsfImS5Q9HAezfbBIx6BUHn6uwI",
+			Page:             "pages/tasks/index",
+			MiniProgramState: global.GVA_CONFIG.MiniProgram.State,
+			Lang:             "zh_CN",
+			Data:             data,
+		})
+		if err != nil || mpResp.ErrCode != 0 {
+			global.GVA_LOG.Error("消息推送失败!", zap.Error(err))
+			response.FailWithMessage("消息推送失败", c)
+			return
+		}
+
 		response.OkWithMessage("更新成功", c)
 	}
 }
