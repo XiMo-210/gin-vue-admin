@@ -211,7 +211,7 @@ func (reviewRecordApi *ReviewRecordsApi) UpdateReviewRecords(c *gin.Context) {
 			},
 			// 审核时间
 			"date3": power.StringMap{
-				"value": reviewRecord.UpdatedAt.Format("2006-01-02 15:04"),
+				"value": time.Now().Format("2006-01-02 15:04"),
 			},
 		}
 
