@@ -17,6 +17,27 @@
           />
         </el-form-item>
         <el-form-item
+          label="类别"
+          prop="category"
+          style="width: 20%;"
+        >
+          <el-select
+            v-model.number="organizationInfo.category"
+            placeholder="请选择"
+          >
+            <el-option
+              key="org"
+              label="学生组织"
+              :value="1"
+            />
+            <el-option
+              key="club"
+              label="学生社团"
+              :value="2"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
           label="名称"
           prop="name"
         >
@@ -441,6 +462,7 @@ const orgType = ref('create')
 
 const organizationInfo = ref({
   ID: 0,
+  category: 0,
   name: '',
   pic: '',
   introduction: ''
@@ -457,6 +479,12 @@ const orgRule = reactive({
     message: '不能只输入空格',
     trigger: ['input', 'blur'],
   }
+  ],
+  category: [{
+    required: true,
+    message: '',
+    trigger: ['input', 'blur'],
+  },
   ],
   name: [{
     required: true,

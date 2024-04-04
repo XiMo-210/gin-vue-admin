@@ -9,6 +9,7 @@ import (
 type Organization struct {
 	global.GVA_MODEL
 	SysUserId    uint   `json:"sysUserId" form:"sysUserId" gorm:"column:sys_user_id;comment:;"`                          //关联的后台管理用户
+	Category     uint   `json:"category" form:"category" gorm:"category;comment:;"binding:"required"`                    //类别 1:组织 2:社团
 	Introduction string `json:"introduction" form:"introduction" gorm:"column:introduction;comment:;"binding:"required"` //介绍
 	Name         string `json:"name" form:"name" gorm:"column:name;comment:;"binding:"required"`                         //名称
 	Pic          string `json:"pic" form:"pic" gorm:"column:pic;comment:;"binding:"required"`                            //封面图
