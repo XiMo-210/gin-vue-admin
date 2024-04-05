@@ -33,6 +33,7 @@ func (taskApi *TaskApi) CreateTask(c *gin.Context) {
 		return
 	}
 
+	taskWithStages.Task.StageNum = len(taskWithStages.TaskStages)
 	if err := taskService.CreateTask(&taskWithStages.Task); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败", c)
@@ -120,6 +121,7 @@ func (taskApi *TaskApi) UpdateTask(c *gin.Context) {
 		return
 	}
 
+	taskWithStages.Task.StageNum = len(taskWithStages.TaskStages)
 	if err := taskService.UpdateTask(taskWithStages.Task); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)

@@ -24,6 +24,7 @@ type Task struct {
 	NeedMain  *bool      `json:"needMain" form:"needMain" gorm:"column:need_main;comment:;"binding:"required"`    //是否需要完成主线任务
 	StartTime *time.Time `json:"startTime" form:"startTime" gorm:"column:start_time;comment:;"binding:"required"` //开始时间
 	EndTime   *time.Time `json:"endTime" form:"endTime" gorm:"column:end_time;comment:;"binding:"required"`       //结束时间
+	StageNum  int        `json:"stageNum" form:"stageNum" gorm:"column:stage_num;comment:;"`                      //阶段数
 }
 
 // TableName 任务 Task自定义表名 tasks
