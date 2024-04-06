@@ -156,13 +156,6 @@ func (reviewRecordApi *ReviewRecordsApi) UpdateReviewRecords(c *gin.Context) {
 			}
 
 			*userTask.CurStage = 0
-
-			err = taskService.UpdateTaskCompletionCounts(user.ID)
-			if err != nil {
-				global.GVA_LOG.Error("Redis更新失败!", zap.Error(err))
-				response.FailWithMessage("Redis更新失败", c)
-				return
-			}
 		}
 
 		err = userTaskService.UpdateUserTask(userTask)
@@ -170,15 +163,6 @@ func (reviewRecordApi *ReviewRecordsApi) UpdateReviewRecords(c *gin.Context) {
 			global.GVA_LOG.Error("更新失败!", zap.Error(err))
 			response.FailWithMessage("更新失败", c)
 			return
-		}
-
-		if *task.Category == 1 {
-			err = taskService.UpdateMainTaskProgress(user.ID)
-			if err != nil {
-				global.GVA_LOG.Error("Redis更新失败!", zap.Error(err))
-				response.FailWithMessage("Redis更新失败", c)
-				return
-			}
 		}
 	}
 

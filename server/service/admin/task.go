@@ -1,15 +1,9 @@
 package admin
 
 import (
-	"context"
-	"errors"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
-	"github.com/redis/go-redis/v9"
-	"math"
-	"strconv"
-	"time"
 )
 
 type TaskService struct {
@@ -120,44 +114,4 @@ func (taskService *TaskService) GetTaskInfoList(info adminReq.TaskSearch) (list 
 
 	err = db.Find(&tasks).Error
 	return tasks, total, err
-}
-
-func (taskService *TaskService) UpdateTaskCompletionCounts(userId uint) error {
-	key := "task_completion_counts_rank"
-	member := strconv.Itoa(int(userId))
-	score, err := global.GVA_REDIS.ZScore(context.Background(), key, member).Result()
-	if err != nil && !errors.Is(err, redis.Nil) {
-		return err
-	}
-
-	timeStamp := time.Now().UnixMilli()
-	score = float64(math.Float64bits(score)+1) + float64(timeStamp)/math.Pow10(13)
-	if err := global.GVA_REDIS.ZAdd(context.Background(), key, redis.Z{
-		Score:  score,
-		Member: member,
-	}).Err(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (taskService *TaskService) UpdateMainTaskProgress(userId uint) error {
-	key := "main_task_progress_rank"
-	member := strconv.Itoa(int(userId))
-	score, err := global.GVA_REDIS.ZScore(context.Background(), key, member).Result()
-	if err != nil && !errors.Is(err, redis.Nil) {
-		return err
-	}
-
-	timeStamp := time.Now().UnixMilli()
-	score = float64(math.Float64bits(score)+1) + float64(timeStamp)/math.Pow10(13)
-	if err := global.GVA_REDIS.ZAdd(context.Background(), key, redis.Z{
-		Score:  score,
-		Member: member,
-	}).Err(); err != nil {
-		return err
-	}
-
-	return nil
 }
