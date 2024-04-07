@@ -1009,6 +1009,13 @@ const dialogFormVisible = ref(false)
 
 // 打开弹窗
 const openDialog = () => {
+  if (advertiserInfo.value.ID === 0) {
+    ElMessage({
+      'type': 'warning',
+      'message': '请先填写广告主信息',
+    })
+    return
+  }
   type.value = 'create'
   materialType.value = 1
   setLink.value = false
