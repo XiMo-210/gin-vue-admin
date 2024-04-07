@@ -544,6 +544,7 @@ const getOrganizationInfo = async() => {
   }
   if (info.data.reorganization.ID === 0) {
     orgType.value = 'create'
+    organizationInfo.value.category = 1
   } else {
     orgType.value = 'update'
   }
