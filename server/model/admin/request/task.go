@@ -18,3 +18,10 @@ type TaskSearch struct {
 	EndTime   *time.Time `json:"endTime" form:"endTime"`
 	request.PageInfo
 }
+
+type CompleteRecords struct {
+	TaskId   *int   `form:"taskId"`
+	UserId   *int   `form:"userId"`
+	Username string `form:"username"`
+	request.PageInfo
+}

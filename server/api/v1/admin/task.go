@@ -4,11 +4,13 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"strconv"
+	"time"
 )
 
 type TaskApi struct {
@@ -206,4 +208,172 @@ func (taskApi *TaskApi) GetTaskList(c *gin.Context) {
 			PageSize: pageInfo.PageSize,
 		}, "获取成功", c)
 	}
+}
+
+// 任务完成情况
+func (TaskApi *TaskApi) CompleteCondition(c *gin.Context) {
+	ID := c.Query("ID")
+	task, err := taskService.GetTask(ID)
+	if err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	db := global.GVA_DB.Model(&admin.StudentInfo{})
+	if task.Campus != "全部" {
+		db.Where("campus = ?", task.Campus)
+	}
+	if task.College != "全部" {
+		db.Where("college = ?", task.College)
+	}
+
+	var total int64
+	if err := db.Count(&total).Error; err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	var complete int64
+	if err := global.GVA_DB.Model(&admin.UserTask{}).
+		Where("task_id = ? AND cur_stage = ?", task.ID, 0).
+		Count(&complete).Error; err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	response.OkWithDetailed(gin.H{
+		"total":    total,
+		"complete": complete,
+	}, "获取成功", c)
+}
+
+// 任务每日完成数
+func (TaskApi *TaskApi) DayCompleteNum(c *gin.Context) {
+	ID := c.Query("ID")
+	task, err := taskService.GetTask(ID)
+	if err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	var results []struct {
+		Date string
+		Num  int
+	}
+	if err := global.GVA_DB.Model(&admin.UserTask{}).
+		Select("DATE_FORMAT(updated_at, '%Y-%m-%d') AS date, COUNT(*) AS num").
+		Where("task_id = ? AND cur_stage = 0", task.ID).
+		Group("date").
+		Scan(&results).Error; err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	dateNumMap := make(map[string]int)
+	for _, result := range results {
+		dateNumMap[result.Date] = result.Num
+	}
+
+	endTime := time.Now()
+	if task.EndTime.Before(endTime) {
+		endTime = *task.EndTime
+	}
+	dates := make([]string, 0)
+	nums := make([]int, 0)
+	for d := *task.StartTime; d.Before(endTime); d = d.AddDate(0, 0, 1) {
+		dates = append(dates, d.Format("2006-01-02"))
+		nums = append(nums, dateNumMap[d.Format("2006-01-02")])
+	}
+
+	response.OkWithDetailed(gin.H{
+		"dates": dates,
+		"nums":  nums,
+	}, "获取成功", c)
+}
+
+func (TaskApi *TaskApi) CompleteRecords(c *gin.Context) {
+	var req adminReq.CompleteRecords
+	err := c.ShouldBindQuery(&req)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	_, err = taskService.GetTask(strconv.Itoa(*req.TaskId))
+	if err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	list, total, err := taskService.GetCompleteRecords(req)
+	if err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	response.OkWithDetailed(response.PageResult{
+		List:     list,
+		Total:    total,
+		Page:     req.Page,
+		PageSize: req.PageSize,
+	}, "获取成功", c)
+}
+
+func (TaskApi *TaskApi) TaskReset(c *gin.Context) {
+	var req request.GetById
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	userTask, err := userTaskService.GetUserTask(strconv.Itoa(req.ID))
+	if err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+
+	if *userTask.CurStage == 0 {
+		user, err := wxUserService.GetWxUser(strconv.Itoa(*userTask.UserId))
+		if err != nil {
+			global.GVA_LOG.Error("获取失败!", zap.Error(err))
+			response.FailWithMessage("获取失败", c)
+			return
+		}
+
+		task, err := taskService.GetTask(strconv.Itoa(*userTask.TaskId))
+		if err != nil {
+			global.GVA_LOG.Error("获取失败!", zap.Error(err))
+			response.FailWithMessage("获取失败", c)
+			return
+		}
+
+		*user.Exp -= *task.Reward
+		*user.Points -= *task.Reward
+		err = wxUserService.UpdateWxUser(user)
+		if err != nil {
+			global.GVA_LOG.Error("更新失败!", zap.Error(err))
+			response.FailWithMessage("更新失败", c)
+			return
+		}
+	}
+
+	*userTask.CurStage = 1
+	userTask.Pic = ""
+	userTask.Loc = ""
+	if err := userTaskService.UpdateUserTask(userTask); err != nil {
+		global.GVA_LOG.Error("删除失败!", zap.Error(err))
+		response.FailWithMessage("删除失败", c)
+		return
+	}
+
+	response.OkWithMessage("重置成功", c)
 }

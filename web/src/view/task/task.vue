@@ -6,7 +6,6 @@
         :inline="true"
         :model="searchInfo"
         class="demo-form-inline"
-        :rules="searchRule"
         @keyup.enter="onSubmit"
       >
         <el-form-item
@@ -46,7 +45,6 @@
             placeholder="任务名称"
             style="width: 140px"
           />
-
         </el-form-item>
         <el-form-item
           label="任务校区"
@@ -75,7 +73,6 @@
               value="莫干山校区"
             />
           </el-select>
-
         </el-form-item>
         <el-form-item
           label="任务学院"
@@ -247,7 +244,7 @@
           align="left"
           label="操作"
           fixed="right"
-          min-width="240"
+          min-width="280"
         >
           <template #default="scope">
             <el-button
@@ -257,6 +254,13 @@
               class="table-button"
               @click="updateTaskFunc(scope.row)"
             >查看 / 变更</el-button>
+            <el-button
+              type="primary"
+              link
+              icon="PieChart"
+              class="table-button"
+              @click="openConditionDialog(scope.row.ID)"
+            >完成情况</el-button>
             <el-button
               type="primary"
               link
@@ -328,7 +332,6 @@
               placeholder="请输入任务名称"
             />
           </el-form-item>
-
           <el-form-item
             label="任务校区:"
             prop="task.campus"
@@ -624,6 +627,7 @@
                   />
                 </el-form-item>
                 <el-form-item
+                  v-show="taskStage.needLoc||taskStage.needNav"
                   label="允许距离:"
                   :prop="'allowDist'+index"
                   style="width: 25%;"
@@ -698,6 +702,153 @@
         v-model="amapParam.loc"
       />
     </el-dialog>
+    <el-dialog
+      v-model="conditionDialog"
+      :before-close="closeConditionDialog"
+      title="任务完成情况"
+      destroy-on-close
+    >
+      <div style="margin-top: 20px">
+        <el-radio-group v-model="dataType">
+          <el-radio-button
+            label="总进度"
+            value="总进度"
+          />
+          <el-radio-button
+            label="日完成数"
+            value="日完成数"
+          />
+          <el-radio-button
+            label="完成记录"
+            value="完成记录"
+          />
+        </el-radio-group>
+      </div>
+      <div
+        v-if="dataType==='总进度'"
+        style="margin-top: 20px;"
+      >
+        <Complete
+          :id="taskId"
+        />
+      </div>
+      <div
+        v-else-if="dataType==='日完成数'"
+        style="margin-top: 20px;"
+      >
+        <Day
+          :id="taskId"
+        />
+      </div>
+      <div
+        v-else-if="dataType==='完成记录'"
+        style="margin-top: 20px;"
+      >
+        <el-form
+          :inline="true"
+          :model="completeSearchInfo"
+          class="demo-form-inline"
+          @keyup.enter="completeOnReset"
+        >
+          <el-form-item
+            label="用户ID"
+            prop="userId"
+            style="margin-left: 20px;"
+          >
+            <el-input
+              v-model="completeSearchInfo.userId"
+              placeholder="用户ID"
+              style="width: 80px"
+            />
+          </el-form-item>
+          <el-form-item
+            label="用户名"
+            prop="username"
+          >
+            <el-input
+              v-model="completeSearchInfo.username"
+              placeholder="用户名"
+              style="width: 120px"
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button
+              type="primary"
+              icon="search"
+              @click="completeOnSubmit"
+            >查询</el-button>
+            <el-button
+              icon="refresh"
+              @click="completeOnReset"
+            >重置</el-button>
+          </el-form-item>
+        </el-form>
+        <el-table
+          style="width: 100%"
+          :data="completeTableData"
+          row-key="userTaskID"
+          :header-cell-style="{ 'text-align': 'center' }"
+          :cell-style="{ textAlign: 'center' }"
+        >
+          <el-table-column
+            label="用户ID"
+            prop="userId"
+            width="100"
+          />
+          <el-table-column
+            label="头像"
+            prop="avatar"
+            width="80"
+          >
+            <template #default="scope">
+              <el-avatar
+                size="small"
+                shape="circle"
+                :src="scope.row.avatar"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="用户名"
+            prop="username"
+            width="160"
+          />
+          <el-table-column
+            label="完成时间"
+            width="160"
+          >
+            <template #default="scope">{{ formatDate(scope.row.completedAt) }}</template>
+          </el-table-column>
+          <el-table-column
+            label="操作"
+            fixed="right"
+            min-width="160"
+          >
+            <template #default="scope">
+              <el-button
+                type="primary"
+                link
+                icon="refresh"
+                class="table-button"
+                @click="handleTaskReset(scope.row.userTaskId)"
+              >重置任务</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="gva-pagination">
+          <el-pagination
+            layout="total, sizes, prev, pager, next, jumper"
+            :current-page="completePage"
+            :page-size="completePageSize"
+            :page-sizes="[5]"
+            :total="completeTotal"
+            @current-change="handleCurrentCompleteChange"
+            @size-change="handleCompleteSizeChange"
+          />
+        </div>
+      </div>
+    </el-dialog>
+    <el-dialog />
   </div>
 </template>
 
@@ -708,7 +859,9 @@ import {
   deleteTaskByIds,
   updateTask,
   findTask,
-  getTaskList
+  getTaskList,
+  completeRecords,
+  taskReset
 } from '@/api/task'
 
 import UploadImg from '@/components/uploadImg/uploadImg.vue'
@@ -719,6 +872,9 @@ import Amap from '@/components/amap/amap.vue'
 import { formatDate, formatBoolean } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
+
+import Complete from './components/complete/index.vue'
+import Day from './components/day/index.vue'
 
 defineOptions({
   name: 'Task'
@@ -799,22 +955,6 @@ const rule = reactive({
     message: '',
     trigger: ['input', 'blur'],
   },
-  ],
-})
-
-const searchRule = reactive({
-  createdAt: [
-    { validator: (rule, value, callback) => {
-      if (searchInfo.value.startCreatedAt && !searchInfo.value.endCreatedAt) {
-        callback(new Error('请填写结束日期'))
-      } else if (!searchInfo.value.startCreatedAt && searchInfo.value.endCreatedAt) {
-        callback(new Error('请填写开始日期'))
-      } else if (searchInfo.value.startCreatedAt && searchInfo.value.endCreatedAt && (searchInfo.value.startCreatedAt.getTime() === searchInfo.value.endCreatedAt.getTime() || searchInfo.value.startCreatedAt.getTime() > searchInfo.value.endCreatedAt.getTime())) {
-        callback(new Error('开始日期应当早于结束日期'))
-      } else {
-        callback()
-      }
-    }, trigger: 'change' }
   ],
 })
 
@@ -1167,6 +1307,75 @@ function formatCategory(category) {
   }
 }
 
+const taskId = ref(0)
+const conditionDialog = ref(false)
+
+const openConditionDialog = (id) => {
+  taskId.value = id
+  getCompleteTableData(taskId.value)
+  conditionDialog.value = true
+}
+
+const closeConditionDialog = () => {
+  taskId.value = 0
+  completeSearchInfo.value = {}
+  conditionDialog.value = false
+}
+
+const dataType = ref('总进度')
+
+const completePage = ref(1)
+const completeTotal = ref(0)
+const completePageSize = ref(5)
+const completeTableData = ref([])
+const completeSearchInfo = ref({})
+
+// 重置
+const completeOnReset = () => {
+  completeSearchInfo.value = {}
+  getCompleteTableData(taskId.value)
+}
+
+// 搜索
+const completeOnSubmit = () => {
+  completePage.value = 1
+  completePageSize.value = 5
+  getCompleteTableData(taskId.value)
+}
+
+// 分页
+const handleCompleteSizeChange = (val) => {
+  completePageSize.value = val
+  getCompleteTableData(taskId.value)
+}
+
+// 修改页面容量
+const handleCurrentCompleteChange = (val) => {
+  completePage.value = val
+  getCompleteTableData(taskId.value)
+}
+
+// 查询
+const getCompleteTableData = async(taskId) => {
+  const table = await completeRecords({ page: completePage.value, pageSize: completePageSize.value, taskId: taskId, ...completeSearchInfo.value })
+  if (table.code === 0) {
+    completeTableData.value = table.data.list
+    completeTotal.value = table.data.total
+    completePage.value = table.data.page
+    completePageSize.value = table.data.pageSize
+  }
+}
+
+const handleTaskReset = async(userTaskId) => {
+  const res = await taskReset({ id: userTaskId })
+  if (res.code === 0) {
+    ElMessage({
+      type: 'success',
+      message: '重置成功'
+    })
+    getCompleteTableData(taskId.value)
+  }
+}
 </script>
 
 <style>

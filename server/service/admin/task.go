@@ -4,6 +4,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/admin/response"
 )
 
 type TaskService struct {
@@ -114,4 +115,33 @@ func (taskService *TaskService) GetTaskInfoList(info adminReq.TaskSearch) (list 
 
 	err = db.Find(&tasks).Error
 	return tasks, total, err
+}
+
+func (taskService *TaskService) GetCompleteRecords(info adminReq.CompleteRecords) (list []response.CompleteRecords, total int64, err error) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+
+	db := global.GVA_DB.Model(&admin.UserTask{}).
+		Select("user_tasks.updated_at AS completed_at, user_tasks.id AS user_task_id ,wx_users.avatar, wx_users.username, wx_users.id AS user_id").
+		Joins("JOIN wx_users ON user_tasks.user_id = wx_users.id").
+		Where("task_id = ? AND cur_stage = 0", info.TaskId)
+
+	if info.UserId != nil {
+		db.Where("user_id = ?", info.UserId)
+	}
+	if info.Username != "" {
+		db.Where("username = ?", info.Username)
+	}
+
+	err = db.Count(&total).Error
+	if err != nil {
+		return
+	}
+
+	if limit != 0 {
+		db = db.Limit(limit).Offset(offset)
+	}
+
+	err = db.Order("completed_at desc").Find(&list).Error
+	return list, total, err
 }

@@ -21,7 +21,11 @@ func (s *TaskRouter) InitTaskRouter(Router *gin.RouterGroup) {
 		taskRouter.PUT("updateTask", taskApi.UpdateTask)              // 更新任务
 	}
 	{
-		taskRouterWithoutRecord.GET("findTask", taskApi.FindTask)       // 根据ID获取任务
-		taskRouterWithoutRecord.GET("getTaskList", taskApi.GetTaskList) // 获取任务列表
+		taskRouterWithoutRecord.GET("findTask", taskApi.FindTask)                   // 根据ID获取任务
+		taskRouterWithoutRecord.GET("getTaskList", taskApi.GetTaskList)             // 获取任务列表
+		taskRouterWithoutRecord.GET("completeCondition", taskApi.CompleteCondition) // 任务完成情况
+		taskRouterWithoutRecord.GET("dayCompleteNum", taskApi.DayCompleteNum)       // 任务每日完成数
+		taskRouterWithoutRecord.GET("completeRecords", taskApi.CompleteRecords)     // 任务完成记录
+		taskRouterWithoutRecord.POST("taskReset", taskApi.TaskReset)                // 任务重置
 	}
 }

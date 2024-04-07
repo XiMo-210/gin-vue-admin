@@ -95,3 +95,35 @@ export const getTaskList = (params) => {
     params
   })
 }
+
+export const completeCondition = (params) => {
+  return service({
+    url: '/task/completeCondition',
+    method: 'get',
+    params
+  })
+}
+
+export const dayCompleteNum = (params) => {
+  return service({
+    url: '/task/dayCompleteNum',
+    method: 'get',
+    params
+  })
+}
+
+export const completeRecords = (params) => {
+  return service({
+    url: '/task/completeRecords',
+    method: 'get',
+    params
+  })
+}
+
+export const taskReset = (data) => {
+  return service({
+    url: '/task/taskReset',
+    method: 'post',
+    data
+  })
+}
