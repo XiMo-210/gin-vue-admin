@@ -974,6 +974,13 @@ const dialogFormVisible = ref(false)
 
 // 打开弹窗
 const openDialog = () => {
+  if (businessInfo.value.ID === 0) {
+    ElMessage({
+      'type': 'warning',
+      'message': '请先填写店铺商家信息',
+    })
+    return
+  }
   type.value = 'create'
   dialogFormVisible.value = true
 }
