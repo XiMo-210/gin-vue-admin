@@ -9,6 +9,7 @@ type OrganizationSearch struct {
 	StartCreatedAt *time.Time `json:"startCreatedAt" form:"startCreatedAt"`
 	EndCreatedAt   *time.Time `json:"endCreatedAt" form:"endCreatedAt"`
 
-	Name string `json:"name" form:"name" `
+	Name     string `json:"name" form:"name" `
+	Category *int   `form:"category"`
 	request.PageInfo
 }

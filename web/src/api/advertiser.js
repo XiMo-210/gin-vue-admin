@@ -95,3 +95,27 @@ export const getAdvertiserList = (params) => {
     params
   })
 }
+
+export const createAdvertiserByAdmin = (data) => {
+  return service({
+    url: '/advertiser/createAdvertiserByAdmin',
+    method: 'post',
+    data
+  })
+}
+
+export const updateAdvertiserByAdmin = (data) => {
+  return service({
+    url: '/advertiser/updateAdvertiserByAdmin',
+    method: 'put',
+    data
+  })
+}
+
+export const findAdvertiserByAdmin = (params) => {
+  return service({
+    url: '/advertiser/findAdvertiserByAdmin',
+    method: 'get',
+    params
+  })
+}

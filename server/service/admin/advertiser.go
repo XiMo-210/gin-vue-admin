@@ -56,6 +56,16 @@ func (advertiserService *AdvertiserService) GetAdvertiserInfoList(info adminReq.
 	if info.StartCreatedAt != nil && info.EndCreatedAt != nil {
 		db = db.Where("created_at BETWEEN ? AND ?", info.StartCreatedAt, info.EndCreatedAt)
 	}
+	if info.Name != "" {
+		db = db.Where("name = ?", info.Name)
+	}
+	if info.SubjectInfo != "" {
+		db = db.Where("subject_info = ?", info.SubjectInfo)
+	}
+	if info.License != "" {
+		db = db.Where("license = ?", info.License)
+	}
+
 	err = db.Count(&total).Error
 	if err != nil {
 		return
@@ -67,4 +77,9 @@ func (advertiserService *AdvertiserService) GetAdvertiserInfoList(info adminReq.
 
 	err = db.Find(&advertisers).Error
 	return advertisers, total, err
+}
+
+func (advertiserService *AdvertiserService) GetAdvertiserByAdmin(ID string) (advertiser admin.Advertiser, err error) {
+	err = global.GVA_DB.Where("id = ?", ID).First(&advertiser).Error
+	return
 }

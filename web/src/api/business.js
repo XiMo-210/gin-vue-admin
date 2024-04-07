@@ -95,3 +95,27 @@ export const getBusinessList = (params) => {
     params
   })
 }
+
+export const createBusinessByAdmin = (data) => {
+  return service({
+    url: '/business/createBusinessByAdmin',
+    method: 'post',
+    data
+  })
+}
+
+export const updateBusinessByAdmin = (data) => {
+  return service({
+    url: '/business/updateBusinessByAdmin',
+    method: 'put',
+    data
+  })
+}
+
+export const findBusinessByAdmin = (params) => {
+  return service({
+    url: '/business/findBusinessByAdmin',
+    method: 'get',
+    params
+  })
+}

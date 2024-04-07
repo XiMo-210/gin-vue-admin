@@ -50,7 +50,7 @@ func (departmentService *DepartmentService) GetDepartmentInfoList(info adminReq.
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&admin.Department{}).Where(&admin.Department{OrganizationId: organizationId})
+	db := global.GVA_DB.Model(&admin.Department{}).Where("organization_id = ?", organizationId)
 	var departments []admin.Department
 	// 如果有条件搜索 下方会自动创建搜索语句
 	if info.StartCreatedAt != nil && info.EndCreatedAt != nil {

@@ -50,7 +50,7 @@ func (couponService *CouponService) GetCouponInfoList(info adminReq.CouponSearch
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&admin.Coupon{}).Where(&admin.Coupon{BusinessId: businessId})
+	db := global.GVA_DB.Model(&admin.Coupon{}).Where("business_id = ?", businessId)
 	var coupons []admin.Coupon
 	// 如果有条件搜索 下方会自动创建搜索语句
 	if info.StartCreatedAt != nil && info.EndCreatedAt != nil {

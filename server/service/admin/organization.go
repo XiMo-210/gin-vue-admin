@@ -25,14 +25,26 @@ func (organizationService *OrganizationService) CreateOrganization(organization 
 // DeleteOrganization 删除组织社团记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (organizationService *OrganizationService) DeleteOrganization(ID string) (err error) {
-	err = global.GVA_DB.Delete(&admin.Organization{}, "id = ?", ID).Error
+	if err = global.GVA_DB.Delete(&admin.Organization{}, "id = ?", ID).Error; err != nil {
+		return err
+	}
+	err = global.GVA_DB.Where(&admin.CommentScore{
+		Category: admin.ORGANIZATION_COMMENT,
+	}).Where("target_id = ?", ID).
+		Delete(&admin.CommentScore{}).Error
 	return err
 }
 
 // DeleteOrganizationByIds 批量删除组织社团记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (organizationService *OrganizationService) DeleteOrganizationByIds(IDs []string) (err error) {
-	err = global.GVA_DB.Delete(&[]admin.Organization{}, "id in ?", IDs).Error
+	if err = global.GVA_DB.Delete(&[]admin.Organization{}, "id in ?", IDs).Error; err != nil {
+		return err
+	}
+	err = global.GVA_DB.Where(&admin.CommentScore{
+		Category: admin.ORGANIZATION_COMMENT,
+	}).Where("target_id IN ?", IDs).
+		Delete(&admin.CommentScore{}).Error
 	return err
 }
 
@@ -65,6 +77,9 @@ func (organizationService *OrganizationService) GetOrganizationInfoList(info adm
 	if info.Name != "" {
 		db = db.Where("name = ?", info.Name)
 	}
+	if info.Category != nil {
+		db = db.Where("category = ?", info.Category)
+	}
 	err = db.Count(&total).Error
 	if err != nil {
 		return
@@ -76,4 +91,9 @@ func (organizationService *OrganizationService) GetOrganizationInfoList(info adm
 
 	err = db.Find(&organizations).Error
 	return organizations, total, err
+}
+
+func (organizationService *OrganizationService) GetOrganizationByAdmin(ID string) (organization admin.Organization, err error) {
+	err = global.GVA_DB.Where("id = ?", ID).First(&organization).Error
+	return
 }

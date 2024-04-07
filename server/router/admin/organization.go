@@ -24,4 +24,9 @@ func (s *OrganizationRouter) InitOrganizationRouter(Router *gin.RouterGroup) {
 		organizationRouterWithoutRecord.GET("findOrganization", organizationApi.FindOrganization)       // 根据ID获取组织社团
 		organizationRouterWithoutRecord.GET("getOrganizationList", organizationApi.GetOrganizationList) // 获取组织社团列表
 	}
+	{
+		organizationRouter.POST("createOrganizationByAdmin", organizationApi.CreateOrganizationByAdmin)         // 新建组织社团ByAdmin
+		organizationRouter.PUT("updateOrganizationByAdmin", organizationApi.UpdateOrganizationByAdmin)          // 更新组织社团ByAdmin
+		organizationRouterWithoutRecord.GET("findOrganizationByAdmin", organizationApi.FindOrganizationByAdmin) // 根据ID获取组织社团ByAdmin
+	}
 }

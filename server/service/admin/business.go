@@ -25,14 +25,26 @@ func (businessService *BusinessService) CreateBusiness(business *admin.Business)
 // DeleteBusiness 删除店铺商家记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (businessService *BusinessService) DeleteBusiness(ID string) (err error) {
-	err = global.GVA_DB.Delete(&admin.Business{}, "id = ?", ID).Error
+	if err = global.GVA_DB.Delete(&admin.Business{}, "id = ?", ID).Error; err != nil {
+		return err
+	}
+	err = global.GVA_DB.Where(&admin.CommentScore{
+		Category: admin.BUSINESS_COMMENT,
+	}).Where("target_id = ?", ID).
+		Delete(&admin.CommentScore{}).Error
 	return err
 }
 
 // DeleteBusinessByIds 批量删除店铺商家记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (businessService *BusinessService) DeleteBusinessByIds(IDs []string) (err error) {
-	err = global.GVA_DB.Delete(&[]admin.Business{}, "id in ?", IDs).Error
+	if err = global.GVA_DB.Delete(&[]admin.Business{}, "id in ?", IDs).Error; err != nil {
+		return err
+	}
+	err = global.GVA_DB.Where(&admin.CommentScore{
+		Category: admin.BUSINESS_COMMENT,
+	}).Where("target_id IN ?", IDs).
+		Delete(&admin.CommentScore{}).Error
 	return err
 }
 
@@ -76,4 +88,9 @@ func (businessService *BusinessService) GetBusinessInfoList(info adminReq.Busine
 
 	err = db.Find(&businesss).Error
 	return businesss, total, err
+}
+
+func (businessService *BusinessService) GetBusinessByAdmin(ID string) (business admin.Business, err error) {
+	err = global.GVA_DB.Where("id = ?", ID).First(&business).Error
+	return
 }

@@ -9,5 +9,8 @@ type AdvertiserSearch struct {
 	StartCreatedAt *time.Time `json:"startCreatedAt" form:"startCreatedAt"`
 	EndCreatedAt   *time.Time `json:"endCreatedAt" form:"endCreatedAt"`
 
+	Name        string `form:"name"`
+	SubjectInfo string `form:"subjectInfo"`
+	License     string `form:"license"`
 	request.PageInfo
 }

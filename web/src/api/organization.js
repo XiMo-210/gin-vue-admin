@@ -95,3 +95,27 @@ export const getOrganizationList = (params) => {
     params
   })
 }
+
+export const createOrganizationByAdmin = (data) => {
+  return service({
+    url: '/organization/createOrganizationByAdmin',
+    method: 'post',
+    data
+  })
+}
+
+export const updateOrganizationByAdmin = (data) => {
+  return service({
+    url: '/organization/updateOrganizationByAdmin',
+    method: 'put',
+    data
+  })
+}
+
+export const findOrganizationByAdmin = (params) => {
+  return service({
+    url: '/organization/findOrganizationByAdmin',
+    method: 'get',
+    params
+  })
+}

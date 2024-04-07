@@ -24,4 +24,9 @@ func (s *AdvertiserRouter) InitAdvertiserRouter(Router *gin.RouterGroup) {
 		advertiserRouterWithoutRecord.GET("findAdvertiser", advertiserApi.FindAdvertiser)       // 根据ID获取广告主
 		advertiserRouterWithoutRecord.GET("getAdvertiserList", advertiserApi.GetAdvertiserList) // 获取广告主列表
 	}
+	{
+		advertiserRouter.POST("createAdvertiserByAdmin", advertiserApi.CreateAdvertiserByAdmin)         // 新建广告主ByAdmin
+		advertiserRouter.PUT("updateAdvertiserByAdmin", advertiserApi.UpdateAdvertiserByAdmin)          // 更新广告主ByAdmin
+		advertiserRouterWithoutRecord.GET("findAdvertiserByAdmin", advertiserApi.FindAdvertiserByAdmin) // 根据ID获取广告主ByAdmin
+	}
 }

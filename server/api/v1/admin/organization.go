@@ -123,8 +123,8 @@ func (organizationApi *OrganizationApi) FindOrganization(c *gin.Context) {
 	customClaims, _ := claims.(*request.CustomClaims)
 
 	if reorganization, err := organizationService.GetOrganization(customClaims.BaseClaims.ID); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		global.GVA_LOG.Error("未完善组织社团信息!", zap.Error(err))
-		response.FailWithMessage("未完善组织社团信息", c)
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
 	} else {
 		response.OkWithData(gin.H{"reorganization": reorganization}, c)
 	}
@@ -156,5 +156,47 @@ func (organizationApi *OrganizationApi) GetOrganizationList(c *gin.Context) {
 			Page:     pageInfo.Page,
 			PageSize: pageInfo.PageSize,
 		}, "获取成功", c)
+	}
+}
+
+func (organizationApi *OrganizationApi) CreateOrganizationByAdmin(c *gin.Context) {
+	var organization admin.Organization
+	err := c.ShouldBindJSON(&organization)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := organizationService.CreateOrganization(&organization); err != nil {
+		global.GVA_LOG.Error("创建失败!", zap.Error(err))
+		response.FailWithMessage("创建失败", c)
+	} else {
+		response.OkWithMessage("创建成功", c)
+	}
+}
+
+func (organizationApi *OrganizationApi) UpdateOrganizationByAdmin(c *gin.Context) {
+	var organization admin.Organization
+	err := c.ShouldBindJSON(&organization)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := organizationService.UpdateOrganization(organization); err != nil {
+		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}
+
+func (organizationApi *OrganizationApi) FindOrganizationByAdmin(c *gin.Context) {
+	ID := c.Query("ID")
+	if reorganization, err := organizationService.GetOrganizationByAdmin(ID); err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Error(err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithData(gin.H{"reorganization": reorganization}, c)
 	}
 }

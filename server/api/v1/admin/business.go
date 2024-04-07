@@ -123,8 +123,8 @@ func (businessApi *BusinessApi) FindBusiness(c *gin.Context) {
 	customClaims, _ := claims.(*request.CustomClaims)
 
 	if rebusiness, err := businessService.GetBusiness(customClaims.BaseClaims.ID); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		global.GVA_LOG.Error("未完善店铺商家信息!", zap.Error(err))
-		response.FailWithMessage("未完善店铺商家信息", c)
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
 	} else {
 		response.OkWithData(gin.H{"rebusiness": rebusiness}, c)
 	}
@@ -156,5 +156,47 @@ func (businessApi *BusinessApi) GetBusinessList(c *gin.Context) {
 			Page:     pageInfo.Page,
 			PageSize: pageInfo.PageSize,
 		}, "获取成功", c)
+	}
+}
+
+func (businessApi *BusinessApi) CreateBusinessByAdmin(c *gin.Context) {
+	var business admin.Business
+	err := c.ShouldBindJSON(&business)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := businessService.CreateBusiness(&business); err != nil {
+		global.GVA_LOG.Error("创建失败!", zap.Error(err))
+		response.FailWithMessage("创建失败", c)
+	} else {
+		response.OkWithMessage("创建成功", c)
+	}
+}
+
+func (businessApi *BusinessApi) UpdateBusinessByAdmin(c *gin.Context) {
+	var business admin.Business
+	err := c.ShouldBindJSON(&business)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := businessService.UpdateBusiness(business); err != nil {
+		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}
+
+func (businessApi *BusinessApi) FindBusinessByAdmin(c *gin.Context) {
+	ID := c.Query("ID")
+	if rebusiness, err := businessService.GetBusinessByAdmin(ID); err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Error(err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithData(gin.H{"rebusiness": rebusiness}, c)
 	}
 }

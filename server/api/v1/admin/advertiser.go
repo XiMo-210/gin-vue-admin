@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"errors"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
@@ -9,6 +10,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 type AdvertiserApi struct {
@@ -120,9 +122,9 @@ func (advertiserApi *AdvertiserApi) FindAdvertiser(c *gin.Context) {
 	claims, _ := c.Get("claims")
 	customClaims, _ := claims.(*request.CustomClaims)
 
-	if readvertiser, err := advertiserService.GetAdvertiser(customClaims.BaseClaims.ID); err != nil {
-		global.GVA_LOG.Error("未完善广告主信息!", zap.Error(err))
-		response.FailWithMessage("未完善广告主信息", c)
+	if readvertiser, err := advertiserService.GetAdvertiser(customClaims.BaseClaims.ID); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
 	} else {
 		response.OkWithData(gin.H{"readvertiser": readvertiser}, c)
 	}
@@ -154,5 +156,47 @@ func (advertiserApi *AdvertiserApi) GetAdvertiserList(c *gin.Context) {
 			Page:     pageInfo.Page,
 			PageSize: pageInfo.PageSize,
 		}, "获取成功", c)
+	}
+}
+
+func (advertiserApi *AdvertiserApi) CreateAdvertiserByAdmin(c *gin.Context) {
+	var advertiser admin.Advertiser
+	err := c.ShouldBindJSON(&advertiser)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := advertiserService.CreateAdvertiser(&advertiser); err != nil {
+		global.GVA_LOG.Error("创建失败!", zap.Error(err))
+		response.FailWithMessage("创建失败", c)
+	} else {
+		response.OkWithMessage("创建成功", c)
+	}
+}
+
+func (advertiserApi *AdvertiserApi) UpdateAdvertiserByAdmin(c *gin.Context) {
+	var advertiser admin.Advertiser
+	err := c.ShouldBindJSON(&advertiser)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := advertiserService.UpdateAdvertiser(advertiser); err != nil {
+		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}
+
+func (advertiserApi *AdvertiserApi) FindAdvertiserByAdmin(c *gin.Context) {
+	ID := c.Query("ID")
+	if readvertiser, err := advertiserService.GetAdvertiserByAdmin(ID); err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Error(err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithData(gin.H{"readvertiser": readvertiser}, c)
 	}
 }

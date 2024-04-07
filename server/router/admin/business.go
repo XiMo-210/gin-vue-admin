@@ -24,4 +24,9 @@ func (s *BusinessRouter) InitBusinessRouter(Router *gin.RouterGroup) {
 		businessRouterWithoutRecord.GET("findBusiness", businessApi.FindBusiness)       // 根据ID获取店铺商家
 		businessRouterWithoutRecord.GET("getBusinessList", businessApi.GetBusinessList) // 获取店铺商家列表
 	}
+	{
+		businessRouter.POST("createBusinessByAdmin", businessApi.CreateBusinessByAdmin)         // 新建店铺商家ByAdmin
+		businessRouter.PUT("updateBusinessByAdmin", businessApi.UpdateBusinessByAdmin)          // 更新店铺商家ByAdmin
+		businessRouterWithoutRecord.GET("findBusinessByAdmin", businessApi.FindBusinessByAdmin) // 根据ID获取店铺商家ByAdmin
+	}
 }
