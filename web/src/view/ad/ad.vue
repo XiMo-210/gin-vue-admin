@@ -378,7 +378,7 @@
               icon="edit"
               class="table-button"
               @click="updateAdFunc(scope.row)"
-            >变更</el-button>
+            >查看 / 变更</el-button>
             <el-button
               type="primary"
               link
@@ -633,10 +633,12 @@
               >
                 <div v-show="option">
                   <span style="float: left;">{{ option }}</span>
-                  <span style="float: right;margin-right: 20px">
-                    {{ "今日搜索次数: "+keywordStats.today }}
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    {{ "本周搜索次数: " +keywordStats.week }}
+                  <span style="float: right;">
+                    <el-tag type="primary">{{ level() }}</el-tag>
+                    &nbsp;
+                    <el-tag type="primary">{{ "今日搜索次数: "+keywordStats.today }}</el-tag>
+                    &nbsp;
+                    <el-tag type="primary">{{ "本周搜索次数: " +keywordStats.week }}</el-tag>
                   </span>
                 </div>
               </el-option>
@@ -1397,6 +1399,21 @@ const handleChange = () => {
     level: level
   }
   choices.value.push(choice.value)
+}
+const level = () => {
+  let level
+  if (keywordStats.value.today >= 500 || keywordStats.value.week >= 5000) {
+    level = '一级 10点/次'
+  } else if (keywordStats.value.today >= 200 || keywordStats.value.week >= 2000) {
+    level = '二级 8点/次'
+  } else if (keywordStats.value.today >= 50 || keywordStats.value.week >= 500) {
+    level = '三级 5点/次'
+  } else if (keywordStats.value.today >= 10 || keywordStats.value.week >= 100) {
+    level = '四级 2点/次'
+  } else {
+    level = '五级 1点/次'
+  }
+  return level
 }
 const choice = ref({
   option: '',
