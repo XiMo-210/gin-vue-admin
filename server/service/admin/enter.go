@@ -14,4 +14,5 @@ type ServiceGroup struct {
 	AdvertiserService
 	AdService
 	ReviewRecordsService
+	PlatformParamService
 }

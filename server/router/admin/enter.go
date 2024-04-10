@@ -14,4 +14,5 @@ type RouterGroup struct {
 	AdvertiserRouter
 	AdRouter
 	ReviewRecordsRouter
+	PlatformParamRouter
 }

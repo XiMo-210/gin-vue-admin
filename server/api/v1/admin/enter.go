@@ -14,4 +14,5 @@ type ApiGroup struct {
 	AdvertiserApi
 	AdApi
 	ReviewRecordsApi
+	PlatformParamApi
 }

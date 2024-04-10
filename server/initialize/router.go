@@ -100,6 +100,7 @@ func Routers() *gin.Engine {
 		adminRouter.InitAdvertiserRouter(PrivateGroup)
 		adminRouter.InitAdRouter(PrivateGroup)
 		adminRouter.InitReviewRecordsRouter(PrivateGroup)
+		adminRouter.InitPlatformParamRouter(PrivateGroup)
 
 	}
 
