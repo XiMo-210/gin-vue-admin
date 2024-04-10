@@ -531,6 +531,7 @@
               v-model.number="formData.adCategory"
               placeholder="请选择"
               :change="handleAdCategoryChange()"
+              :disabled="type==='update'"
             >
               <el-option
                 key="infoStream"
