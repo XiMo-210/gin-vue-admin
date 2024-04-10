@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"errors"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/admin"
 	adminReq "github.com/flipped-aurora/gin-vue-admin/server/model/admin/request"
@@ -8,6 +9,8 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
+	"time"
 )
 
 type PlatformParamApi struct {
@@ -31,6 +34,9 @@ func (platformParamApi *PlatformParamApi) CreatePlatformParam(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+
+	*platformParam.RegisterEndDate = platformParam.RegisterEndDate.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+	*platformParam.TermEndDate = platformParam.TermEndDate.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
 
 	if err := platformParamService.CreatePlatformParam(&platformParam); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Error(err))
@@ -94,6 +100,9 @@ func (platformParamApi *PlatformParamApi) UpdatePlatformParam(c *gin.Context) {
 		return
 	}
 
+	*platformParam.RegisterEndDate = platformParam.RegisterEndDate.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+	*platformParam.TermEndDate = platformParam.TermEndDate.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+
 	if err := platformParamService.UpdatePlatformParam(platformParam); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
@@ -112,8 +121,7 @@ func (platformParamApi *PlatformParamApi) UpdatePlatformParam(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
 // @Router /platformParam/findPlatformParam [get]
 func (platformParamApi *PlatformParamApi) FindPlatformParam(c *gin.Context) {
-	ID := c.Query("ID")
-	if replatformParam, err := platformParamService.GetPlatformParam(ID); err != nil {
+	if replatformParam, err := platformParamService.GetPlatformParam(); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败", c)
 	} else {

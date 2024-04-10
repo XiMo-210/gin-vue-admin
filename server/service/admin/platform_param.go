@@ -39,8 +39,8 @@ func (platformParamService *PlatformParamService) UpdatePlatformParam(platformPa
 
 // GetPlatformParam 根据ID获取平台参数记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (platformParamService *PlatformParamService) GetPlatformParam(ID string) (platformParam admin.PlatformParam, err error) {
-	err = global.GVA_DB.Where("id = ?", ID).First(&platformParam).Error
+func (platformParamService *PlatformParamService) GetPlatformParam() (platformParam admin.PlatformParam, err error) {
+	err = global.GVA_DB.First(&platformParam).Error
 	return
 }
 
