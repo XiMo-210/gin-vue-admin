@@ -95,7 +95,10 @@ func (adService *AdService) GetAdInfoList(info adminReq.AdSearch, advertiserId u
 }
 
 func (adService *AdService) UpdateAdStatus() (err error) {
-	if err = global.GVA_DB.Model(&admin.Ad{}).Where("end_date < ? AND status <> 4", time.Now()).Update("status", 3).Error; err != nil {
+	if err = global.GVA_DB.Model(&admin.Ad{}).Where("? BETWEEN start_date AND end_date", time.Now()).Update("status", 2).Error; err != nil {
+		return err
+	}
+	if err = global.GVA_DB.Model(&admin.Ad{}).Where("end_date < ?", time.Now()).Update("status", 3).Error; err != nil {
 		return err
 	}
 	if err = global.GVA_DB.Model(&admin.Ad{}).Where("cost_category = 1 AND buy_amount = cost_impressions").Update("status", 4).Error; err != nil {
