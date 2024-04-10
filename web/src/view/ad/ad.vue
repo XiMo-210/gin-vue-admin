@@ -272,6 +272,13 @@
         />
         <el-table-column
           align="left"
+          label="创建日期"
+          width="180"
+        >
+          <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
+        </el-table-column>
+        <el-table-column
+          align="left"
           label="广告名称"
           prop="name"
           width="120"
@@ -763,6 +770,7 @@ import {
   findAdvertiser,
 } from '@/api/advertiser'
 // 全量引入格式化工具 请按需保留
+import { formatDate } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive, computed } from 'vue'
 import UploadImg from '@/components/uploadImg/uploadImg.vue'
