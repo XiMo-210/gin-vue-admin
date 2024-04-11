@@ -726,7 +726,7 @@
       </div>
       <div
         v-if="dataType==='总进度'"
-        style="margin-top: 20px;"
+        style="margin-top: 20px;display: flex;justify-content: center;"
       >
         <Complete
           :id="taskId"
@@ -734,7 +734,7 @@
       </div>
       <div
         v-else-if="dataType==='日完成数'"
-        style="margin-top: 20px;"
+        style="margin-top: 20px;display: flex;justify-content: center;"
       >
         <Day
           :id="taskId"
