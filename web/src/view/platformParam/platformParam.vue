@@ -34,7 +34,7 @@
           <el-input-number
             v-model="formData.admissionYear"
             controls-position="right"
-            :step="2"
+            :step="1"
             step-strictly
           />
         </el-form-item>
@@ -58,7 +58,7 @@
           <el-input-number
             v-model="formData.termYear"
             controls-position="right"
-            :step="2"
+            :step="1"
             step-strictly
           />
         </el-form-item>

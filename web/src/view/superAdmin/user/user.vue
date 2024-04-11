@@ -11,12 +11,18 @@
       </div>
       <el-table
         :data="tableData"
+        :header-cell-style="{ 'text-align': 'center' }"
+        :cell-style="{ textAlign: 'center' }"
         row-key="ID"
       >
         <el-table-column
-          align="left"
+          label="ID"
+          min-width="60"
+          prop="ID"
+        />
+        <el-table-column
           label="头像"
-          min-width="75"
+          min-width="80"
         >
           <template #default="scope">
             <CustomPic
@@ -26,37 +32,26 @@
           </template>
         </el-table-column>
         <el-table-column
-          align="left"
-          label="ID"
-          min-width="50"
-          prop="ID"
-        />
-        <el-table-column
-          align="left"
           label="用户名"
-          min-width="150"
+          min-width="120"
           prop="userName"
         />
         <el-table-column
-          align="left"
           label="昵称"
-          min-width="150"
+          min-width="120"
           prop="nickName"
         />
         <el-table-column
-          align="left"
           label="手机号"
           min-width="180"
           prop="phone"
         />
         <el-table-column
-          align="left"
           label="邮箱"
           min-width="180"
           prop="email"
         />
         <el-table-column
-          align="left"
           label="用户角色"
           min-width="200"
         >
@@ -74,7 +69,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          align="left"
           label="启用"
           min-width="150"
         >
@@ -95,6 +89,18 @@
           fixed="right"
         >
           <template #default="scope">
+            <el-button
+              type="primary"
+              link
+              icon="edit"
+              @click="openEdit(scope.row)"
+            >编辑</el-button>
+            <el-button
+              type="primary"
+              link
+              icon="magic-stick"
+              @click="resetPasswordFunc(scope.row)"
+            >重置密码</el-button>
             <el-popover
               v-model:visible="scope.row.visible"
               placement="top"
@@ -120,18 +126,6 @@
                 >删除</el-button>
               </template>
             </el-popover>
-            <el-button
-              type="primary"
-              link
-              icon="edit"
-              @click="openEdit(scope.row)"
-            >编辑</el-button>
-            <el-button
-              type="primary"
-              link
-              icon="magic-stick"
-              @click="resetPasswordFunc(scope.row)"
-            >重置密码</el-button>
           </template>
         </el-table-column>
 
@@ -154,8 +148,10 @@
       :show-close="false"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
+      width="35%"
+      align-center
     >
-      <div style="height:60vh;overflow:auto;padding:0 12px;">
+      <div>
         <el-form
           ref="userForm"
           :rules="rules"
@@ -163,40 +159,54 @@
           label-width="80px"
         >
           <el-form-item
+            label="头像"
+            label-width="80px"
+          >
+            <UploadImg
+              v-model="userInfo.headerImg"
+            />
+          </el-form-item>
+          <el-form-item
             v-if="dialogFlag === 'add'"
             label="用户名"
             prop="userName"
+            style="width: 90%;"
           >
             <el-input v-model="userInfo.userName" />
           </el-form-item>
           <el-form-item
             v-if="dialogFlag === 'add'"
             label="密码"
-            prop="password"
+            prop="passWord"
+            style="width: 90%;"
           >
-            <el-input v-model="userInfo.password" />
+            <el-input v-model="userInfo.passWord" />
           </el-form-item>
           <el-form-item
             label="昵称"
             prop="nickName"
+            style="width: 90%;"
           >
             <el-input v-model="userInfo.nickName" />
           </el-form-item>
           <el-form-item
             label="手机号"
             prop="phone"
+            style="width: 90%;"
           >
             <el-input v-model="userInfo.phone" />
           </el-form-item>
           <el-form-item
             label="邮箱"
             prop="email"
+            style="width: 90%;"
           >
             <el-input v-model="userInfo.email" />
           </el-form-item>
           <el-form-item
             label="用户角色"
             prop="authorityId"
+            style="width: 90%;"
           >
             <el-cascader
               v-model="userInfo.authorityIds"
@@ -216,14 +226,6 @@
               inline-prompt
               :active-value="1"
               :inactive-value="2"
-            />
-          </el-form-item>
-          <el-form-item
-            label="头像"
-            label-width="80px"
-          >
-            <UploadImg
-              v-model="userInfo.headerImg"
             />
           </el-form-item>
 
@@ -377,8 +379,8 @@ const deleteUserFunc = async(row) => {
 
 // 弹窗相关
 const userInfo = ref({
-  username: '',
-  password: '',
+  userName: '',
+  passWord: '',
   nickName: '',
   headerImg: '',
   authorityId: '',
@@ -391,7 +393,7 @@ const rules = ref({
     { required: true, message: '请输入用户名', trigger: 'blur' },
     { min: 5, message: '最低5位字符', trigger: 'blur' }
   ],
-  password: [
+  passWord: [
     { required: true, message: '请输入用户密码', trigger: 'blur' },
     { min: 6, message: '最低6位字符', trigger: 'blur' }
   ],

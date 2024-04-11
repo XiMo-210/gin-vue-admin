@@ -235,63 +235,57 @@
           type="selection"
           width="55"
         />
-
         <el-table-column
-          align="left"
+          label="ID"
+          prop="ID"
+          width="60"
+        />
+        <el-table-column
           label="姓名"
           prop="name"
           width="120"
         />
         <el-table-column
-          align="left"
           label="性别"
           prop="gender"
           width="80"
         />
         <el-table-column
-          align="left"
           label="入学年份"
           prop="admissionYear"
           width="100"
         />
         <el-table-column
-          align="left"
           label="校区"
           prop="campus"
           width="120"
         />
         <el-table-column
-          align="left"
           label="学号"
           prop="studentId"
           width="120"
         />
         <el-table-column
-          align="left"
           label="学院"
           prop="college"
           width="250"
         />
         <el-table-column
-          align="left"
           label="专业"
           prop="major"
           width="120"
         />
         <el-table-column
-          align="left"
           label="班级"
           prop="class"
           width="160"
         />
         <el-table-column
-          align="left"
           label="寝室"
           prop="dormitory"
           width="160"
         />
         <el-table-column
-          align="left"
           label="是否注册"
           prop="userId"
           width="80"
@@ -299,7 +293,6 @@
           <template #default="scope">{{ scope.row.userId!==0 ? "是":"否" }}</template>
         </el-table-column>
         <el-table-column
-          align="left"
           label="操作"
           fixed="right"
           min-width="240"
@@ -308,19 +301,10 @@
             <el-button
               type="primary"
               link
-              class="table-button"
-              @click="getDetails(scope.row)"
-            >
-              <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
-              查看详情
-            </el-button>
-            <el-button
-              type="primary"
-              link
               icon="edit"
               class="table-button"
               @click="updateStudentInfoFunc(scope.row)"
-            >变更</el-button>
+            >查看 / 变更</el-button>
             <el-button
               type="primary"
               link
@@ -347,180 +331,212 @@
       :before-close="closeDialog"
       :title="type==='create'?'添加':'修改'"
       destroy-on-close
+      align-center
     >
-      <el-scrollbar height="500px">
-        <el-form
-          ref="elFormRef"
-          :model="formData"
-          label-position="right"
-          :rules="rule"
-          label-width="100px"
+      <el-form
+        ref="elFormRef"
+        :model="formData"
+        label-position="right"
+        :rules="rule"
+        label-width="100px"
+        inline="true"
+      >
+        <el-text
+          tag="b"
+          size="large"
+          style="color: black;"
         >
-          <el-form-item
-            label="姓名:"
-            prop="name"
+          基本信息
+        </el-text>
+        <el-divider style="margin-top: 10px;margin-bottom: 10px;" />
+        <el-form-item
+          label="姓名:"
+          prop="name"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model="formData.name"
+            :clearable="true"
+            placeholder="请输入姓名"
+          />
+        </el-form-item>
+        <el-form-item
+          label="性别:"
+          prop="gender"
+          style="width: 25%;"
+        >
+          <el-select
+            v-model="formData.gender"
           >
-            <el-input
-              v-model="formData.name"
-              :clearable="true"
-              placeholder="请输入姓名"
+            <el-option
+              key="man"
+              value="男"
             />
-          </el-form-item>
-          <el-form-item
-            label="性别:"
-            prop="gender"
-          >
-            <el-select
-              v-model="formData.gender"
-              placeholder="请选择性别"
-              clearable
-            >
-              <el-option
-                key="man"
-                value="男"
-              />
-              <el-option
-                key="woman"
-                value="女"
-              />
-            </el-select>
-
-          </el-form-item>
-          <el-form-item
-            label="出生日期:"
-            prop="birthday"
-          >
-            <el-date-picker
-              v-model="formData.birthday"
-              type="date"
-              style="width:100%"
-              placeholder="选择日期"
-              :clearable="true"
+            <el-option
+              key="woman"
+              value="女"
             />
-          </el-form-item>
-          <el-form-item
-            label="身份证:"
-            prop="idCard"
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="出生日期:"
+          prop="birthday"
+          style="width: 40%;"
+        >
+          <el-date-picker
+            v-model="formData.birthday"
+            type="date"
+            placeholder="选择日期"
+          />
+        </el-form-item>
+        <el-form-item
+          label="入学年份:"
+          prop="admissionYear"
+        >
+          <el-input-number
+            v-model="formData.admissionYear"
+            controls-position="right"
+            :step="1"
+            step-strictly
+          />
+        </el-form-item>
+        <el-form-item
+          label="身份证:"
+          prop="idCard"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model="formData.idCard"
+            :clearable="true"
+            placeholder="请输入身份证"
+          />
+        </el-form-item>
+        <el-form-item
+          label="录取编号:"
+          prop="admissionLetterId"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model="formData.admissionLetterId"
+            :clearable="true"
+            placeholder="请输入录取通知书编号"
+          />
+        </el-form-item>
+        <el-form-item
+          label="生源地:"
+          prop="originPlace"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model="formData.originPlace"
+            :clearable="true"
+            placeholder="请输入生源地"
+          />
+        </el-form-item>
+        <br>
+        <el-text
+          tag="b"
+          size="large"
+          style="color: black;"
+        >
+          学生信息
+        </el-text>
+        <el-divider style="margin-top: 10px;margin-bottom: 10px;" />
+        <el-form-item
+          label="学号:"
+          prop="studentId"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model="formData.studentId"
+            :clearable="true"
+            placeholder="请输入学号"
+          />
+        </el-form-item>
+        <el-form-item
+          label="校区:"
+          prop="campus"
+          style="width: 30%;"
+        >
+          <el-select
+            v-model="formData.campus"
           >
-            <el-input
-              v-model="formData.idCard"
-              :clearable="true"
-              placeholder="请输入身份证"
+            <el-option
+              key="zh"
+              value="朝晖校区"
             />
-          </el-form-item>
-          <el-form-item
-            label="录取编号:"
-            prop="admissionLetterId"
-          >
-            <el-input
-              v-model="formData.admissionLetterId"
-              :clearable="true"
-              placeholder="请输入录取通知书编号"
+            <el-option
+              key="pf"
+              value="屏峰校区"
             />
-          </el-form-item>
-          <el-form-item
-            label="入学年份:"
-            prop="admissionYear"
-          >
-            <el-input
-              v-model.number="formData.admissionYear"
-              :clearable="true"
-              placeholder="请输入入学年份"
+            <el-option
+              key="mgs"
+              value="莫干山校区"
             />
-          </el-form-item>
-          <el-form-item
-            label="生源地:"
-            prop="originPlace"
-          >
-            <el-input
-              v-model="formData.originPlace"
-              :clearable="true"
-              placeholder="请输入生源地"
-            />
-          </el-form-item>
-          <el-form-item
-            label="校区:"
-            prop="campus"
-          >
-            <el-select
-              v-model="formData.campus"
-              clearable
-              placeholder="请选择校区"
-            >
-              <el-option
-                key="zh"
-                value="朝晖校区"
-              />
-              <el-option
-                key="pf"
-                value="屏峰校区"
-              />
-              <el-option
-                key="mgs"
-                value="莫干山校区"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item
-            label="学号:"
-            prop="studentId"
-          >
-            <el-input
-              v-model="formData.studentId"
-              :clearable="true"
-              placeholder="请输入学号"
-            />
-          </el-form-item>
-          <el-form-item
-            label="学院:"
-            prop="college"
-          >
-            <el-input
-              v-model="formData.college"
-              :clearable="true"
-              placeholder="请输入学院"
-            />
-          </el-form-item>
-          <el-form-item
-            label="专业:"
-            prop="major"
-          >
-            <el-input
-              v-model="formData.major"
-              :clearable="true"
-              placeholder="请输入专业"
-            />
-          </el-form-item>
-          <el-form-item
-            label="班级:"
-            prop="class"
-          >
-            <el-input
-              v-model="formData.class"
-              :clearable="true"
-              placeholder="请输入班级"
-            />
-          </el-form-item>
-          <el-form-item
-            label="寝室:"
-            prop="dormitory"
-          >
-            <el-input
-              v-model="formData.dormitory"
-              :clearable="true"
-              placeholder="请输入寝室"
-            />
-          </el-form-item>
-          <el-form-item
-            label="人像:"
-            prop="portrait"
-          >
-            <UploadImg
-              v-model="formData.portrait"
-            />
-          </el-form-item>
-        </el-form>
-      </el-scrollbar>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="学院:"
+          prop="college"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model="formData.college"
+            :clearable="true"
+            placeholder="请输入学院"
+          />
+        </el-form-item>
+        <el-form-item
+          label="专业:"
+          prop="major"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model="formData.major"
+            :clearable="true"
+            placeholder="请输入专业"
+          />
+        </el-form-item>
+        <el-form-item
+          label="班级:"
+          prop="class"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model="formData.class"
+            :clearable="true"
+            placeholder="请输入班级"
+          />
+        </el-form-item>
+        <el-form-item
+          label="寝室:"
+          prop="dormitory"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model="formData.dormitory"
+            :clearable="true"
+            placeholder="请输入寝室"
+          />
+        </el-form-item>
+        <br>
+        <el-text
+          tag="b"
+          size="large"
+          style="color: black;"
+        >
+          人脸信息
+        </el-text>
+        <el-divider style="margin-top: 10px;margin-bottom: 10px;" />
+        <el-form-item
+          label="人像:"
+          prop="portrait"
+        >
+          <UploadImg
+            v-model="formData.portrait"
+          />
+        </el-form-item>
+      </el-form>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="closeDialog">取 消</el-button>
@@ -530,73 +546,6 @@
           >确 定</el-button>
         </div>
       </template>
-    </el-dialog>
-
-    <el-dialog
-      v-model="detailShow"
-      style="width: 600px"
-      lock-scroll
-      :before-close="closeDetailShow"
-      title="查看详情"
-      destroy-on-close
-    >
-      <el-scrollbar height="650px">
-        <el-descriptions
-          column="1"
-          border
-        >
-          <el-descriptions-item label="姓名">
-            {{ formData.name }}
-          </el-descriptions-item>
-          <el-descriptions-item label="性别">
-            {{ formData.gender }}
-          </el-descriptions-item>
-          <el-descriptions-item label="出生日期">
-            {{ formatDate(formData.birthday) }}
-          </el-descriptions-item>
-          <el-descriptions-item label="身份证">
-            {{ formData.idCard }}
-          </el-descriptions-item>
-          <el-descriptions-item label="录取通知书编号">
-            {{ formData.admissionLetterId }}
-          </el-descriptions-item>
-          <el-descriptions-item label="入学年份">
-            {{ formData.admissionYear }}
-          </el-descriptions-item>
-          <el-descriptions-item label="生源地">
-            {{ formData.originPlace }}
-          </el-descriptions-item>
-          <el-descriptions-item label="校区">
-            {{ formData.campus }}
-          </el-descriptions-item>
-          <el-descriptions-item label="学号">
-            {{ formData.studentId }}
-          </el-descriptions-item>
-          <el-descriptions-item label="学院">
-            {{ formData.college }}
-          </el-descriptions-item>
-          <el-descriptions-item label="专业">
-            {{ formData.major }}
-          </el-descriptions-item>
-          <el-descriptions-item label="班级">
-            {{ formData.class }}
-          </el-descriptions-item>
-          <el-descriptions-item label="寝室">
-            {{ formData.dormitory }}
-          </el-descriptions-item>
-          <el-descriptions-item label="人像">
-            <el-image
-              style="width: 50px; height: 50px"
-              :preview-src-list="ReturnArrImg(formData.portrait)"
-              :src="getUrl(formData.portrait)"
-              fit="cover"
-            />
-          </el-descriptions-item>
-          <el-descriptions-item label="是否注册">
-            {{ formData.userId!==0 ? "是":"否" }}
-          </el-descriptions-item>
-        </el-descriptions>
-      </el-scrollbar>
     </el-dialog>
   </div>
 </template>
@@ -610,12 +559,8 @@ import {
   findStudentInfo,
   getStudentInfoList
 } from '@/api/studentInfo'
-import { getUrl } from '@/utils/image'
-// 图片选择组件
 import UploadImg from '@/components/uploadImg/uploadImg.vue'
 
-// 全量引入格式化工具 请按需保留
-import { formatDate, ReturnArrImg } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 
@@ -629,13 +574,13 @@ defineOptions({
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
   name: '',
-  gender: '',
+  gender: '男',
   birthday: new Date(),
   idCard: '',
   admissionLetterId: '',
-  admissionYear: 0,
+  admissionYear: new Date().getFullYear(),
   originPlace: '',
-  campus: '',
+  campus: '朝晖校区',
   studentId: '',
   college: '',
   major: '',
@@ -948,46 +893,6 @@ const deleteStudentInfoFunc = async(row) => {
 // 弹窗控制标记
 const dialogFormVisible = ref(false)
 
-// 查看详情控制标记
-const detailShow = ref(false)
-
-// 打开详情弹窗
-const openDetailShow = () => {
-  detailShow.value = true
-}
-
-// 打开详情
-const getDetails = async(row) => {
-  // 打开弹窗
-  const res = await findStudentInfo({ ID: row.ID })
-  if (res.code === 0) {
-    formData.value = res.data.restudentInfo
-    openDetailShow()
-  }
-}
-
-// 关闭详情弹窗
-const closeDetailShow = () => {
-  detailShow.value = false
-  formData.value = {
-    name: '',
-    gender: '',
-    birthday: new Date(),
-    idCard: '',
-    admissionLetterId: '',
-    admissionYear: 0,
-    originPlace: '',
-    campus: '',
-    studentId: '',
-    college: '',
-    major: '',
-    class: '',
-    dormitory: '',
-    userId: 0,
-    isRegister: false,
-  }
-}
-
 // 打开弹窗
 const openDialog = () => {
   type.value = 'create'
@@ -999,13 +904,13 @@ const closeDialog = () => {
   dialogFormVisible.value = false
   formData.value = {
     name: '',
-    gender: '',
+    gender: '男',
     birthday: new Date(),
     idCard: '',
     admissionLetterId: '',
-    admissionYear: 0,
+    admissionYear: new Date().getFullYear(),
     originPlace: '',
-    campus: '',
+    campus: '朝晖校区',
     studentId: '',
     college: '',
     major: '',

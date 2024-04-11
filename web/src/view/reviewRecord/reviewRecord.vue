@@ -106,6 +106,11 @@
         :cell-style="{ textAlign: 'center' }"
       >
         <el-table-column
+          label="ID"
+          prop="ID"
+          width="60"
+        />
+        <el-table-column
           label="申请日期"
           width="180"
         >

@@ -8,32 +8,26 @@
           icon="plus"
           @click="addAuthority(0)"
         >新增角色</el-button>
-        <el-icon
-          class="cursor-pointer"
-          @click="toDoc('https://www.bilibili.com/video/BV1kv4y1g7nT?p=8&vd_source=f2640257c21e3b547a790461ed94875e')"
-        ><VideoCameraFilled /></el-icon>
       </div>
       <el-table
         :data="tableData"
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         row-key="authorityId"
         style="width: 100%"
+        :header-cell-style="{ 'text-align': 'center' }"
+        :cell-style="{ textAlign: 'center' }"
       >
         <el-table-column
           label="角色ID"
-          min-width="180"
           prop="authorityId"
         />
         <el-table-column
-          align="left"
           label="角色名称"
-          min-width="180"
           prop="authorityName"
         />
         <el-table-column
-          align="left"
           label="操作"
-          width="460"
+          width="600"
         >
           <template #default="scope">
             <el-button
@@ -79,6 +73,8 @@
     <el-dialog
       v-model="dialogFormVisible"
       :title="dialogTitle"
+      align-center
+      width="25%"
     >
       <el-form
         ref="authorityForm"
@@ -187,8 +183,6 @@ import WarningBar from '@/components/warningBar/warningBar.vue'
 
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { toDoc } from '@/utils/doc'
-import { VideoCameraFilled } from '@element-plus/icons-vue'
 
 defineOptions({
   name: 'Authority'
