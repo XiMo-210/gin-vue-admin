@@ -7,7 +7,8 @@
       <Decoration7 class="title">
         <el-text
           tag="b"
-          style="font-size: 40px;font-family: Microsoft Yahei;"
+          style="font-size: 40px;font-family: Microsoft Yahei;cursor: pointer;"
+          @click="goback()"
         >&nbsp;&nbsp;&nbsp;&nbsp;E启新篇 迎新数据实况&nbsp;&nbsp;&nbsp;&nbsp;
         </el-text>
       </Decoration7>
@@ -19,6 +20,17 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goback = () => {
+  router.go(-1)
+}
+
+router.afterEach(() => {
+  location.reload()
+})
 </script>
 
 <style scoped lang="scss">
