@@ -20,7 +20,43 @@ const charts = ref()
 
 onMounted(() => {
   const mychart = echarts.init(charts.value)
-  const list = [
+
+  let index = 0
+
+  function fun() {
+    setInterval(function() {
+      mychart.dispatchAction({
+        type: 'hideTip',
+        seriesIndex: 0,
+        dataIndex: index
+      })
+      // 显示提示框
+      mychart.dispatchAction({
+        type: 'showTip',
+        seriesIndex: 0,
+        dataIndex: index
+      })
+      // 取消高亮指定的数据图形
+      mychart.dispatchAction({
+        type: 'downplay',
+        seriesIndex: 0,
+        dataIndex: index === 0 ? data.length : index - 1
+      })
+      mychart.dispatchAction({
+        type: 'highlight',
+        seriesIndex: 0,
+        dataIndex: index
+      })
+      index++
+      if (index > data.length) {
+        index = 0
+      }
+    }, 3000)
+  }
+
+  fun()
+
+  const data = [
     {
       value: '50',
       name: '华为',
@@ -90,7 +126,7 @@ onMounted(() => {
         emphasis: {
           focus: 'none',
         },
-        data: list,
+        data: data,
       },
     ],
   })
