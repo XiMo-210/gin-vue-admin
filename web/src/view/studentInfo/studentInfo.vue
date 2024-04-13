@@ -9,7 +9,6 @@
         :rules="searchRule"
         @keyup.enter="onSubmit"
       >
-
         <el-form-item
           label="姓名"
           prop="name"
@@ -19,7 +18,6 @@
             placeholder="姓名"
             style="width: 140px"
           />
-
         </el-form-item>
         <el-form-item
           label="性别"
@@ -40,19 +38,16 @@
               value="女"
             />
           </el-select>
-
         </el-form-item>
         <el-form-item
           label="入学年份"
           prop="admissionYear"
         >
-
           <el-input
             v-model.number="searchInfo.admissionYear"
             placeholder="入学年份"
             style="width: 140px"
           />
-
         </el-form-item>
         <el-form-item
           label="生源地"
@@ -63,7 +58,6 @@
             placeholder="生源地"
             style="width: 140px"
           />
-
         </el-form-item>
         <el-form-item
           label="校区"
@@ -88,7 +82,6 @@
               value="莫干山校区"
             />
           </el-select>
-
         </el-form-item>
         <el-form-item
           label="学号"
@@ -99,7 +92,6 @@
             placeholder="学号"
             style="width: 140px"
           />
-
         </el-form-item>
         <el-form-item
           label="学院"
@@ -110,7 +102,6 @@
             placeholder="学院"
             style="width: 260px"
           />
-
         </el-form-item>
         <el-form-item
           label="专业"
@@ -121,7 +112,6 @@
             placeholder="专业"
             style="width: 160px"
           />
-
         </el-form-item>
         <el-form-item
           label="班级"
@@ -132,7 +122,6 @@
             placeholder="班级"
             style="width: 214px"
           />
-
         </el-form-item>
         <el-form-item
           label="寝室"
@@ -143,13 +132,11 @@
             placeholder="寝室"
             style="width: 180px"
           />
-
         </el-form-item>
         <el-form-item
           label="是否注册用户"
           prop="isRegister"
         >
-
           <el-select
             v-model="searchInfo.isRegister"
             clearable
@@ -167,7 +154,6 @@
               value="false"
             />
           </el-select>
-
         </el-form-item>
         <el-form-item>
           <el-button
@@ -238,12 +224,13 @@
         <el-table-column
           label="ID"
           prop="ID"
-          width="60"
+          width="65"
         />
         <el-table-column
           label="姓名"
           prop="name"
           width="120"
+          :show-overflow-tooltip="true"
         />
         <el-table-column
           label="性别"
@@ -268,22 +255,26 @@
         <el-table-column
           label="学院"
           prop="college"
-          width="250"
+          width="160"
+          :show-overflow-tooltip="true"
         />
         <el-table-column
           label="专业"
           prop="major"
-          width="120"
+          width="160"
+          :show-overflow-tooltip="true"
         />
         <el-table-column
           label="班级"
           prop="class"
           width="160"
+          :show-overflow-tooltip="true"
         />
         <el-table-column
           label="寝室"
           prop="dormitory"
           width="160"
+          :show-overflow-tooltip="true"
         />
         <el-table-column
           label="是否注册"
@@ -356,7 +347,6 @@
         >
           <el-input
             v-model="formData.name"
-            :clearable="true"
             placeholder="请输入姓名"
           />
         </el-form-item>
@@ -407,7 +397,6 @@
         >
           <el-input
             v-model="formData.idCard"
-            :clearable="true"
             placeholder="请输入身份证"
           />
         </el-form-item>
@@ -418,7 +407,6 @@
         >
           <el-input
             v-model="formData.admissionLetterId"
-            :clearable="true"
             placeholder="请输入录取通知书编号"
           />
         </el-form-item>
@@ -429,7 +417,6 @@
         >
           <el-input
             v-model="formData.originPlace"
-            :clearable="true"
             placeholder="请输入生源地"
           />
         </el-form-item>
@@ -449,7 +436,6 @@
         >
           <el-input
             v-model="formData.studentId"
-            :clearable="true"
             placeholder="请输入学号"
           />
         </el-form-item>
@@ -478,33 +464,30 @@
         <el-form-item
           label="学院:"
           prop="college"
-          style="width: 40%;"
+          style="width: 60%;"
         >
           <el-input
             v-model="formData.college"
-            :clearable="true"
             placeholder="请输入学院"
           />
         </el-form-item>
         <el-form-item
           label="专业:"
           prop="major"
-          style="width: 40%;"
+          style="width: 60%;"
         >
           <el-input
             v-model="formData.major"
-            :clearable="true"
             placeholder="请输入专业"
           />
         </el-form-item>
         <el-form-item
           label="班级:"
           prop="class"
-          style="width: 40%;"
+          style="width: 60%;"
         >
           <el-input
             v-model="formData.class"
-            :clearable="true"
             placeholder="请输入班级"
           />
         </el-form-item>
@@ -515,7 +498,6 @@
         >
           <el-input
             v-model="formData.dormitory"
-            :clearable="true"
             placeholder="请输入寝室"
           />
         </el-form-item>
