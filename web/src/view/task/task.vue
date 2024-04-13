@@ -81,6 +81,7 @@
           <el-select
             v-model="searchInfo.college"
             placeholder="任务学院"
+            clearable
             style="width: 240px;"
           >
             <el-option
