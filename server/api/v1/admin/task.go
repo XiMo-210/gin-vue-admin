@@ -35,6 +35,8 @@ func (taskApi *TaskApi) CreateTask(c *gin.Context) {
 		return
 	}
 
+	*taskWithStages.Task.StartTime = taskWithStages.Task.StartTime.Truncate(24 * time.Hour).Add(16 * time.Hour)
+	*taskWithStages.Task.EndTime = taskWithStages.Task.EndTime.Truncate(24 * time.Hour).Add(40*time.Hour - time.Minute)
 	taskWithStages.Task.StageNum = len(taskWithStages.TaskStages)
 	if err := taskService.CreateTask(&taskWithStages.Task); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Error(err))
@@ -123,6 +125,8 @@ func (taskApi *TaskApi) UpdateTask(c *gin.Context) {
 		return
 	}
 
+	*taskWithStages.Task.StartTime = taskWithStages.Task.StartTime.Truncate(24 * time.Hour).Add(16 * time.Hour)
+	*taskWithStages.Task.EndTime = taskWithStages.Task.EndTime.Truncate(24 * time.Hour).Add(40*time.Hour - time.Minute)
 	taskWithStages.Task.StageNum = len(taskWithStages.TaskStages)
 	if err := taskService.UpdateTask(taskWithStages.Task); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Error(err))
