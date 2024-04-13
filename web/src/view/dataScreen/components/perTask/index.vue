@@ -19,6 +19,65 @@ const charts = ref()
 
 onMounted(() => {
   const mychart = echarts.init(charts.value)
+
+  const data = [
+    { value: 2.4, name: '健行学院' },
+    { value: 7.6, name: '化学工程学院' },
+    { value: 2.8, name: '材料科学与工程学院' },
+    { value: 3.4, name: '生物工程学院' },
+    { value: 2.3, name: '环境学院' },
+    { value: 2.2, name: '食品科学与工程学院' },
+    { value: 6.4, name: '药学院、绿色制药协同创新中心' },
+    { value: 5.1, name: '机械工程学院' },
+    { value: 4.2, name: '经济学院' },
+    { value: 5.6, name: '管理学院' },
+    { value: 1.8, name: '公共管理学院' },
+    { value: 4.9, name: '法学院' },
+    { value: 6.8, name: '信息工程学院' },
+    { value: 7.7, name: '计算机科学与技术学院、软件学院' },
+    { value: 7.3, name: '设计与建筑学院' },
+    { value: 5.4, name: '土木工程学院' },
+    { value: 5.2, name: '人文学院' },
+    { value: 4.4, name: '外国语学院' },
+    { value: 4.6, name: '理学院' },
+    { value: 4.4, name: '教育科学与技术学院' }
+  ]
+
+  let index = 0
+
+  function fun() {
+    setInterval(function() {
+      mychart.dispatchAction({
+        type: 'hideTip',
+        seriesIndex: 0,
+        dataIndex: index
+      })
+      // 显示提示框
+      mychart.dispatchAction({
+        type: 'showTip',
+        seriesIndex: 0,
+        dataIndex: index
+      })
+      // 取消高亮指定的数据图形
+      mychart.dispatchAction({
+        type: 'downplay',
+        seriesIndex: 0,
+        dataIndex: index === 0 ? data.length : index - 1
+      })
+      mychart.dispatchAction({
+        type: 'highlight',
+        seriesIndex: 0,
+        dataIndex: index
+      })
+      index++
+      if (index > data.length) {
+        index = 0
+      }
+    }, 3000)
+  }
+
+  fun()
+
   mychart.setOption({
     title: {
       text: '各学院人均任务完成数',
@@ -33,29 +92,8 @@ onMounted(() => {
         fontSize: 30
       }
     },
-    dataset: {
-      source: [
-        ['num', 'college'],
-        [3, '教育科学与技术'],
-        [5, '化学工程学院'],
-        [7, '材料科学与工程学院'],
-        [3, '机械工程学院'],
-        [5, '信息工程学院'],
-        [7, '管理学院'],
-        [6, '经济学院'],
-        [7, '生物工程学院'],
-        [9, '环境学院'],
-        [7, '人文学院'],
-        [4, '药学院'],
-        [7, '理学院'],
-        [2, '法学院'],
-        [8, '外国语学院'],
-        [9, '设计与建筑学院'],
-        [4, '土木工程学院'],
-        [6, '健行学院'],
-        [5, '公共管理学院'],
-        [7, '计算机学院']
-      ]
+    tooltip: {
+      trigger: 'item'
     },
     grid: {
       containLabel: true
@@ -64,7 +102,8 @@ onMounted(() => {
       name: '完成数'
     },
     yAxis: {
-      type: 'category'
+      type: 'category',
+      data: data.map(item => item.name)
     },
     visualMap: {
       orient: 'horizontal',
@@ -84,8 +123,9 @@ onMounted(() => {
         encode: {
           x: 'num',
           y: 'college'
-        }
-      }
+        },
+        data: data
+      },
     ]
   })
 })

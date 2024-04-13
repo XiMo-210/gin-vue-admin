@@ -160,7 +160,7 @@ onMounted(() => {
       trigger: 'item'
     },
     title: {
-      text: '全国新生分布',
+      text: '全国注册新生分布',
       itemGap: 30,
       left: 'center',
       top: '8%',

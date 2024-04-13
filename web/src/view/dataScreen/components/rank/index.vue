@@ -18,21 +18,20 @@ const charts = ref()
 
 onMounted(() => {
   const mychart = echarts.init(charts.value)
-  var maxData = [1343, 1492, 1576, 1676, 1887, 2003, 2376, 2492, 2743]
+  var maxData = []
   var xData = [
-    '张三',
-    '李四',
-    '王五',
-    '赵六',
-    '灰太狼',
-    '喜羊羊',
-    '猪猪侠',
-    '芙莉莲',
-    '芜湖'
+    '赵伟返', '钱数芳', '孙江娜', '李秀英', '周   敏', '吴帮静', '郑   丽', '王提强', '冯精磊', '陈   洋',
+    '褚   艳', '卫   勇', '蒋平军', '沈规霞', '韩时亮', '杨西刚', '朱嗷艳', '秦课勇', '尤拉军', '许偶霞',
+    '何从刚', '吕凑艳', '施   军', '张不勇', '孔破霞', '曹学亮', '严   刚', '华   艳', '金   军', '魏夏霞',
+    '陶篇刚', '姜送艳', '戚次军', '谢毕霞', '邹笑亮', '喻   刚', '柏系艳', '吴   军', '窦   霞', '章覆亮'
   ]
 
-  var tempMaxData = maxData.pop()
-  var tempXData = xData.pop()
+  maxData.push(100)
+  for (let i = 1; i <= 40; i++) {
+    maxData.push(maxData[i - 1] + 10 * (i % 5 + 1))
+    xData[i - 1] = (41 - i) + ' ' + xData[i - 1]
+  }
+
   var option = {
     title: {
       text: '积分榜单',
@@ -78,7 +77,7 @@ onMounted(() => {
       orient: 'horizontal',
       show: false,
       min: 0,
-      max: 3000,
+      max: 2000,
       text: ['High', 'Low'],
       dimension: 0,
       inRange: {
@@ -86,15 +85,34 @@ onMounted(() => {
       }
     }
   }
-  setInterval(() => {
-    xData.unshift(tempXData)
-    tempXData = xData.pop()
 
-    maxData.unshift(tempMaxData)
-    tempMaxData = maxData.pop()
+  var startIdx = 32
+  var endIdx = 40
+
+  var slicedMaxData = maxData.slice(startIdx, endIdx)
+  var slicedXData = xData.slice(startIdx, endIdx)
+
+  option.yAxis.data = slicedXData
+  option.series[0].data = slicedMaxData
+
+  mychart.setOption(option)
+
+  setInterval(() => {
+    var slicedMaxData = maxData.slice(startIdx, endIdx)
+    var slicedXData = xData.slice(startIdx, endIdx)
+
+    option.yAxis.data = slicedXData
+    option.series[0].data = slicedMaxData
 
     mychart.setOption(option)
-  }, 1000)
+
+    startIdx -= 8
+    endIdx -= 8
+    if (startIdx < 0) {
+      startIdx = 32
+      endIdx = 40
+    }
+  }, 5000)
 })
 
 </script>

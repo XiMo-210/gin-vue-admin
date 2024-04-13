@@ -39,7 +39,7 @@ onMounted(() => {
         top: 'middle',
         style: {
           fill: '#fff',
-          text: '注册学生数: ' + data + '人',
+          text: '注册人数: ' + data + '人',
           font: '14px Microsoft YaHei'
         }
       }]
@@ -184,7 +184,7 @@ onMounted(() => {
         top: 'middle',
         style: {
           fill: '#fff',
-          text: '认证用户数:  ' + data + '人',
+          text: '人脸认证数:  ' + data + '人',
           font: '14px Microsoft YaHei'
         }
       }]

@@ -57,35 +57,28 @@ onMounted(() => {
   fun()
 
   const data = [
-    {
-      value: '50',
-      name: '华为',
-      textStyle: {
-        shadowBlur: 4,
-        shadowColor: '#ECEFFF',
-        shadowOffsetY: 14,
-        color: '#73DDFF',
-      },
-    },
-    { value: '30', name: 'VIVO' },
-    { value: '29', name: 'OPPO' },
-    { value: '28', name: 'HONOR' },
-    { value: '27', name: '红米' },
-    { value: '26', name: '小米' },
-    { value: '25', name: '美图' },
-    { value: '24', name: 'ONEPLUS' },
-    { value: '23', name: '魅族' },
-    { value: '22', name: '红手指' },
-    { value: '21', name: 'SAMSUNG' },
-    { value: '20', name: '金立' },
-    { value: '16', name: 'BLACKBERRY' },
-    { value: '15', name: '诺基亚' },
-    { value: '14', name: '锤子' },
-    { value: '13', name: '大疆' },
-    { value: '12', name: '361' },
-    { value: '11', name: '摩托罗拉' },
-    { value: '10', name: '联想' },
-    { value: '9', name: '玩家国度' },
+    { value: '4012', name: '中国移动' },
+    { value: '3275', name: '微精弘' },
+    { value: '3054', name: 'KFC' },
+    { value: '2985', name: '华为' },
+    { value: '2845', name: '校园卡' },
+    { value: '2776', name: '校级组织' },
+    { value: '2645', name: '小米' },
+    { value: '2575', name: '美团' },
+    { value: '2475', name: '饿了么' },
+    { value: '2424', name: '哔哩哔哩' },
+    { value: '2383', name: 'ROG' },
+    { value: '2268', name: '明日方舟' },
+    { value: '2133', name: '小红书' },
+    { value: '2074', name: '网易云' },
+    { value: '1727', name: '学习通' },
+    { value: '1686', name: '钉钉' },
+    { value: '1535', name: '飞书' },
+    { value: '1456', name: '校园健身' },
+    { value: '1324', name: 'CSDN' },
+    { value: '1228', name: '稀土掘金' },
+    { value: '1110', name: '联想' },
+    { value: '1056', name: '玩家国度' },
   ]
   mychart.setOption({
     tooltip: {
@@ -148,6 +141,6 @@ onMounted(() => {
     width: 100%;
     height: 100%;
     margin-top: 20px;
-    scale: 0.9;
+    scale: 0.8;
   }
 </style>
