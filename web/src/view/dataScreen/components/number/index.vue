@@ -24,7 +24,8 @@ import { ref, onMounted } from 'vue'
 const leftCharts = ref()
 onMounted(() => {
   const mycharts = echarts.init(leftCharts.value)
-  const data1 = 2876 / 3000
+  const data = 4937
+  const data1 = data / 5014
   const data2 = data1 * 0.8
   mycharts.setOption({
     graphic: [{
@@ -38,7 +39,7 @@ onMounted(() => {
         top: 'middle',
         style: {
           fill: '#fff',
-          text: '注册学生数: 2876人',
+          text: '注册学生数: ' + data + '人',
           font: '14px Microsoft YaHei'
         }
       }]
@@ -75,7 +76,8 @@ onMounted(() => {
 const rightCharts = ref()
 onMounted(() => {
   const mycharts = echarts.init(rightCharts.value)
-  const data1 = 1678 / 3000
+  const data = 3482
+  const data1 = data / 5014
   const data2 = data1 * 0.8
   mycharts.setOption({
     graphic: [{
@@ -89,7 +91,7 @@ onMounted(() => {
         top: 'middle',
         style: {
           fill: '#fff',
-          text: '报到人数: 1257人',
+          text: '报到人数: ' + data + '人',
           font: '14px Microsoft YaHei'
         }
       }]
@@ -167,7 +169,8 @@ onMounted(() => {
 const charts = ref()
 onMounted(() => {
   const mycharts = echarts.init(charts.value)
-  const data1 = 2687 / 3000
+  const data = 4698
+  const data1 = data / 5014
   const data2 = data1 * 0.8
   mycharts.setOption({
     graphic: [{
@@ -181,7 +184,7 @@ onMounted(() => {
         top: 'middle',
         style: {
           fill: '#fff',
-          text: '认证用户数: 2687人',
+          text: '认证用户数:  ' + data + '人',
           font: '14px Microsoft YaHei'
         }
       }]

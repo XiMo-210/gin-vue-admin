@@ -13,10 +13,6 @@ const charts = ref()
 
 echarts.registerMap('china', chinaJSON)
 
-function randomData() {
-  return Math.round(Math.random() * 1000)
-}
-
 onMounted(() => {
   const mychart = echarts.init(charts.value)
 
@@ -56,107 +52,107 @@ onMounted(() => {
   fun()
 
   const data = [{
+    name: '浙江',
+    value: 3129
+  }, {
     name: '北京',
-    value: randomData()
+    value: 11
   }, {
     name: '天津',
-    value: randomData()
-  }, {
-    name: '上海',
-    value: randomData()
-  }, {
-    name: '重庆',
-    value: randomData()
+    value: 30
   }, {
     name: '河北',
-    value: randomData()
-  }, {
-    name: '河南',
-    value: randomData()
-  }, {
-    name: '云南',
-    value: randomData()
-  }, {
-    name: '辽宁',
-    value: randomData()
-  }, {
-    name: '黑龙江',
-    value: randomData()
-  }, {
-    name: '湖南',
-    value: randomData()
-  }, {
-    name: '安徽',
-    value: randomData()
-  }, {
-    name: '山东',
-    value: randomData()
-  }, {
-    name: '新疆',
-    value: randomData()
-  }, {
-    name: '江苏',
-    value: randomData()
-  }, {
-    name: '浙江',
-    value: randomData()
-  }, {
-    name: '江西',
-    value: randomData()
-  }, {
-    name: '湖北',
-    value: randomData()
-  }, {
-    name: '广西',
-    value: randomData()
-  }, {
-    name: '甘肃',
-    value: randomData()
+    value: 78
   }, {
     name: '山西',
-    value: randomData()
+    value: 83
   }, {
     name: '内蒙古',
-    value: randomData()
+    value: 20
   }, {
-    name: '陕西',
-    value: randomData()
+    name: '辽宁',
+    value: 43
   }, {
     name: '吉林',
-    value: randomData()
+    value: 20
+  }, {
+    name: '黑龙江',
+    value: 40
+  }, {
+    name: '上海',
+    value: 31
+  }, {
+    name: '江苏',
+    value: 70
+  }, {
+    name: '安徽',
+    value: 106
   }, {
     name: '福建',
-    value: randomData()
+    value: 85
   }, {
-    name: '贵州',
-    value: randomData()
+    name: '江西',
+    value: 82
+  }, {
+    name: '山东',
+    value: 93
+  }, {
+    name: '河南',
+    value: 107
+  }, {
+    name: '湖北',
+    value: 50
+  }, {
+    name: '湖南',
+    value: 130
   }, {
     name: '广东',
-    value: randomData()
+    value: 127
   }, {
-    name: '青海',
-    value: randomData()
-  }, {
-    name: '西藏',
-    value: randomData()
-  }, {
-    name: '四川',
-    value: randomData()
-  }, {
-    name: '宁夏',
-    value: randomData()
+    name: '广西',
+    value: 113
   }, {
     name: '海南',
-    value: randomData()
+    value: 20
+  }, {
+    name: '重庆',
+    value: 45
+  }, {
+    name: '四川',
+    value: 81
+  }, {
+    name: '贵州',
+    value: 140
+  }, {
+    name: '云南',
+    value: 89
+  }, {
+    name: '西藏',
+    value: 22
+  }, {
+    name: '陕西',
+    value: 40
+  }, {
+    name: '甘肃',
+    value: 80
+  }, {
+    name: '青海',
+    value: 15
+  }, {
+    name: '宁夏',
+    value: 10
+  }, {
+    name: '新疆',
+    value: 24
   }, {
     name: '台湾',
-    value: randomData()
+    value: 0
   }, {
     name: '香港',
-    value: randomData()
+    value: 0
   }, {
     name: '澳门',
-    value: randomData()
+    value: 0
   }]
 
   mychart.setOption({
@@ -177,7 +173,7 @@ onMounted(() => {
     },
     visualMap: {
       min: 0,
-      max: 1000,
+      max: 200,
       left: '10%',
       bottom: '5%',
       text: ['高', '低'],

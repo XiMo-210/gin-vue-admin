@@ -55,25 +55,26 @@ onMounted(() => {
   fun()
 
   const data = [
-    { value: 200, name: '化学工程学院' },
-    { value: 150, name: '材料科学与工程学院' },
-    { value: 200, name: '机械工程学院' },
-    { value: 150, name: '信息工程学院' },
-    { value: 150, name: '管理学院' },
-    { value: 100, name: '经济学院' },
-    { value: 80, name: '生物工程学院' },
-    { value: 100, name: '环境学院' },
-    { value: 80, name: '人文学院' },
-    { value: 180, name: '药学院、绿色制药协同创新中心' },
-    { value: 120, name: '理学院' },
-    { value: 80, name: '法学院' },
-    { value: 200, name: '外国语学院' },
-    { value: 100, name: '设计与建筑学院' },
-    { value: 100, name: '土木工程学院' },
-    { value: 50, name: '健行学院' },
-    { value: 80, name: '公共管理学院' },
-    { value: 200, name: '计算机科学与技术学院、软件学院' },
-    { value: 300, name: '教育科学与技术学院' }
+    { value: 120, name: '健行学院' },
+    { value: 389, name: '化学工程学院' },
+    { value: 142, name: '材料科学与工程学院' },
+    { value: 173, name: '生物工程学院' },
+    { value: 107, name: '环境学院' },
+    { value: 104, name: '食品科学与工程学院' },
+    { value: 302, name: '药学院、绿色制药协同创新中心' },
+    { value: 517, name: '机械工程学院' },
+    { value: 140, name: '经济学院' },
+    { value: 286, name: '管理学院' },
+    { value: 99, name: '公共管理学院' },
+    { value: 138, name: '法学院' },
+    { value: 341, name: '信息工程学院' },
+    { value: 578, name: '计算机科学与技术学院、软件学院' },
+    { value: 389, name: '设计与建筑学院' },
+    { value: 279, name: '土木工程学院' },
+    { value: 255, name: '人文学院' },
+    { value: 202, name: '外国语学院' },
+    { value: 230, name: '理学院' },
+    { value: 223, name: '教育科学与技术学院' }
   ]
 
   mychart.setOption({
@@ -110,7 +111,7 @@ onMounted(() => {
         }
       },
       {
-        text: '3000人',
+        text: '5014人',
         left: '50%',
         top: '55%',
         textAlign: 'center',

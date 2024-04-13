@@ -18,6 +18,10 @@ const charts = ref()
 
 onMounted(() => {
   const mychart = echarts.init(charts.value)
+
+  const data1 = 2494 / 5014
+  const data2 = 2520 / 5014
+
   mychart.setOption({
     title: {
       text: '男女比例',
@@ -72,12 +76,12 @@ onMounted(() => {
         },
         data: [
           {
-            value: 52.7,
-            name: '男  覆盖率52.7%'
+            value: data1,
+            name: '男  覆盖率' + (data1 * 100).toFixed(1) + '%'
           },
           {
             name: ' ',
-            value: 47.3,
+            value: 1 - data1,
             itemStyle: {
               normal: {
                 label: {
@@ -138,12 +142,12 @@ onMounted(() => {
         },
         data: [
           {
-            value: 47.3,
-            name: '女  覆盖率47.3%',
+            value: data2,
+            name: '女  覆盖率' + (data2 * 100).toFixed(1) + '%',
           },
           {
             name: ' ',
-            value: 52.7,
+            value: 1 - data2,
             itemStyle: {
               normal: {
                 label: {
