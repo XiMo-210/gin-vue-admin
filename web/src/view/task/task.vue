@@ -78,11 +78,18 @@
           label="任务学院"
           prop="college"
         >
-          <el-input
+          <el-select
             v-model="searchInfo.college"
             placeholder="任务学院"
-            style="width: 260px"
-          />
+            style="width: 240px;"
+          >
+            <el-option
+              v-for="college in colleges"
+              :key="college"
+              :label="college"
+              :value="college"
+            />
+          </el-select>
         </el-form-item>
         <p />
         <el-form-item
@@ -364,10 +371,17 @@
             prop="task.college"
             style="width: 40%;"
           >
-            <el-input
+            <el-select
               v-model="taskWithStagesformData.task.college"
-              placeholder="请输入任务学院"
-            />
+              placeholder="学院"
+            >
+              <el-option
+                v-for="college in colleges"
+                :key="college"
+                :label="college"
+                :value="college"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item
             label="奖励积分:"
@@ -527,10 +541,36 @@
                 :prop="'cameraId'+index"
                 style="width: 35%;"
               >
-                <el-input
+                <el-select
                   v-model="taskStage.cameraId"
-                  placeholder="摄像头编号"
-                />
+                  placeholder="请选择"
+                >
+                  <el-option
+                    key="1"
+                    value="CAM001"
+                    label="CAM001"
+                  />
+                  <el-option
+                    key="2"
+                    value="CAM002"
+                    label="CAM002"
+                  />
+                  <el-option
+                    key="3"
+                    value="CAM003"
+                    label="CAM003"
+                  />
+                  <el-option
+                    key="4"
+                    value="CAM004"
+                    label="CAM004"
+                  />
+                  <el-option
+                    key="5"
+                    value="CAM005"
+                    label="CAM005"
+                  />
+                </el-select>
               </el-form-item>
               <p />
               <span v-show="!taskStage.needCamera">
@@ -1376,6 +1416,30 @@ const handleTaskReset = async(userTaskId) => {
     getCompleteTableData(taskId.value)
   }
 }
+
+const colleges = [
+  '全部',
+  '健行学院',
+  '化学工程学院',
+  '材料科学与工程学院',
+  '生物工程学院',
+  '环境学院',
+  '食品科学与工程学院',
+  '药学院、绿色制药协同创新中心',
+  '机械工程学院',
+  '经济学院',
+  '管理学院',
+  '公共管理学院',
+  '法学院',
+  '信息工程学院',
+  '计算机科学与技术学院、软件学院',
+  '设计与建筑学院',
+  '土木工程学院',
+  '人文学院',
+  '外国语学院',
+  '理学院',
+  '教育科学与技术学院'
+]
 </script>
 
 <style>

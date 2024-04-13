@@ -97,11 +97,18 @@
           label="学院"
           prop="college"
         >
-          <el-input
+          <el-select
             v-model="searchInfo.college"
             placeholder="学院"
-            style="width: 260px"
-          />
+            style="width: 240px"
+          >
+            <el-option
+              v-for="college in colleges"
+              :key="college"
+              :label="college"
+              :value="college"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item
           label="专业"
@@ -110,7 +117,7 @@
           <el-input
             v-model="searchInfo.major"
             placeholder="专业"
-            style="width: 160px"
+            style="width: 180px"
           />
         </el-form-item>
         <el-form-item
@@ -120,7 +127,7 @@
           <el-input
             v-model="searchInfo.class"
             placeholder="班级"
-            style="width: 214px"
+            style="width: 180px"
           />
         </el-form-item>
         <el-form-item
@@ -134,7 +141,7 @@
           />
         </el-form-item>
         <el-form-item
-          label="是否注册用户"
+          label="是否注册"
           prop="isRegister"
         >
           <el-select
@@ -466,10 +473,17 @@
           prop="college"
           style="width: 60%;"
         >
-          <el-input
+          <el-select
             v-model="formData.college"
-            placeholder="请输入学院"
-          />
+            placeholder="学院"
+          >
+            <el-option
+              v-for="college in colleges"
+              :key="college"
+              :label="college"
+              :value="college"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item
           label="专业:"
@@ -929,6 +943,28 @@ const enterDialog = async() => {
   })
 }
 
+const colleges = [
+  '健行学院',
+  '化学工程学院',
+  '材料科学与工程学院',
+  '生物工程学院',
+  '环境学院',
+  '食品科学与工程学院',
+  '药学院、绿色制药协同创新中心',
+  '机械工程学院',
+  '经济学院',
+  '管理学院',
+  '公共管理学院',
+  '法学院',
+  '信息工程学院',
+  '计算机科学与技术学院、软件学院',
+  '设计与建筑学院',
+  '土木工程学院',
+  '人文学院',
+  '外国语学院',
+  '理学院',
+  '教育科学与技术学院'
+]
 </script>
 
 <style>
