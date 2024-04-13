@@ -528,7 +528,7 @@
                 style="width: 35%;"
               >
                 <el-input
-                  v-model.number="taskStage.cameraId"
+                  v-model="taskStage.cameraId"
                   placeholder="摄像头编号"
                 />
               </el-form-item>
@@ -1112,7 +1112,7 @@ const taskWithStagesformData = ref({
     needNav: false,
     loc: '',
     needCamera: false,
-    cameraId: 0
+    cameraId: ''
   }],
 })
 
@@ -1172,7 +1172,7 @@ const closeDialog = () => {
       needNav: false,
       loc: '',
       needCamera: false,
-      cameraId: 0
+      cameraId: ''
     }],
   }
 }
@@ -1239,7 +1239,7 @@ function addTaskStage() {
     needNav: false,
     loc: '',
     needCamera: false,
-    cameraId: 0
+    cameraId: ''
   })
   activeStep.value += 1
 }
