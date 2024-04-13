@@ -49,7 +49,7 @@ type TaskStage struct {
 	NeedNav      *bool          `json:"needNav" form:"needNav" gorm:"column:need_nav;comment:;"binding:"required"`            //是否需要导航
 	Loc          string         `json:"loc" form:"loc" gorm:"column:loc;comment:;"binding:"required"`                         //指定位置
 	NeedCamera   *bool          `json:"needCamera" form:"needCamera" gorm:"column:need_camera;comment:;"binding:"required"`   //是否关联摄像头
-	CameraId     *int           `json:"cameraId" form:"cameraId" gorm:"column:camera_id;comment:;size:20;"binding:"required"` //摄像头编号
+	CameraId     string         `json:"cameraId" form:"cameraId" gorm:"column:camera_id;comment:;size:20;"binding:"required"` //摄像头编号
 }
 
 // TableName 任务阶段 TaskStage自定义表名 task_stages
