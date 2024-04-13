@@ -22,7 +22,7 @@ type Ad struct {
 	StartHour       *int           `json:"startHour" form:"startHour" gorm:"column:start_hour;comment:;"binding:"required"`          //开始时段
 	EndHour         *int           `json:"endHour" form:"endHour" gorm:"column:end_hour;comment:;"binding:"required"`                //结束时段
 	Target          datatypes.JSON `json:"target" form:"target" gorm:"column:target;comment:;"`                                      //目标受众
-	Keywords        datatypes.JSON `json:"keywords" form:"keywords" gorm:"column:keywords;comment:;"`                                //关键词
+	Keywords        string         `json:"keywords" form:"keywords" gorm:"column:keywords;comment:;"`                                //关键词
 	CostCategory    *int           `json:"costCategory" form:"costCategory" gorm:"column:cost_category;comment:;"binding:"required"` //计费类型
 	BuyAmount       *int           `json:"buyAmount" form:"buyAmount" gorm:"column:buy_amount;comment:;"binding:"required"`          //购买量
 	CostImpressions *int           `json:"costImpressions" form:"costImpressions" gorm:"column:cost_impressions;comment:;"`          //已展示量
