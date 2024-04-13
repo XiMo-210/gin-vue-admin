@@ -355,262 +355,260 @@
       :title="type==='create'?'添加':'修改'"
       destroy-on-close
     >
-      <el-scrollbar height="500px">
-        <el-form
-          ref="elFormRef"
-          :model="formData"
-          label-position="right"
-          :rules="rule"
-          :inline="true"
-          label-width="120px"
+      <el-form
+        ref="elFormRef"
+        :model="formData"
+        label-position="right"
+        :rules="rule"
+        :inline="true"
+        label-width="120px"
+      >
+        <el-form-item
+          label="优惠券名称:"
+          prop="name"
+          style="width: 40%;"
         >
+          <el-input
+            v-model="formData.name"
+            :clearable="true"
+            placeholder="请输入优惠券名称"
+          />
+        </el-form-item>
+        <el-form-item
+          label="总数量:"
+          prop="totalCount"
+          style="width: 45%;"
+        >
+          <el-input
+            v-model.number="formData.totalCount"
+            placeholder="请输入总数量"
+          >
+            <template #append>0表示无数量限制</template>
+          </el-input>
+        </el-form-item>
+        <div v-show="type==='update'">
           <el-form-item
-            label="优惠券名称:"
-            prop="name"
+            label="剩余数量:"
+            prop="remainCount"
             style="width: 40%;"
           >
             <el-input
-              v-model="formData.name"
-              :clearable="true"
-              placeholder="请输入优惠券名称"
+              v-model.number="formData.remainCount"
+              disabled
             />
           </el-form-item>
           <el-form-item
-            label="总数量:"
-            prop="totalCount"
-            style="width: 50%;"
-          >
-            <el-input
-              v-model.number="formData.totalCount"
-              placeholder="请输入总数量"
-            >
-              <template #append>0表示无数量限制</template>
-            </el-input>
-          </el-form-item>
-          <div v-show="type==='update'">
-            <el-form-item
-              label="剩余数量:"
-              prop="remainCount"
-              style="width: 40%;"
-            >
-              <el-input
-                v-model.number="formData.remainCount"
-                disabled
-              />
-            </el-form-item>
-            <el-form-item
-              label="已使用数量:"
-              prop="usedCount"
-              style="width: 40%;"
-            >
-              <el-input
-                v-model.number="formData.usedCount"
-                disabled
-              />
-            </el-form-item>
-          </div>
-          <el-form-item
-            label="优惠券类型:"
-            prop="couponCategory"
-            style="width: 40%;"
-          >
-            <el-select
-              v-model.number="formData.couponCategory"
-              placeholder="请选择"
-            >
-              <el-option
-                key="fullMinus"
-                label="满减券"
-                :value="1"
-              />
-              <el-option
-                key="cash"
-                label="现金券"
-                :value="2"
-              />
-              <el-option
-                key="discount"
-                label="折扣券"
-                :value="3"
-              />
-            </el-select>
-          </el-form-item>
-          <span v-show="formData.couponCategory===1">
-            <el-form-item
-              label="满"
-              prop="fullMoney"
-            >
-              <el-input
-                v-model.number="formData.fullMoney"
-                placeholder="满"
-                style="width: 110px;"
-              >
-                <template #append>元</template>
-              </el-input>
-            </el-form-item>
-            <el-form-item
-              label="减"
-              prop="minusMoney"
-              label-width="0px"
-            >
-              <el-input
-                v-model.number="formData.minusMoney"
-                placeholder="减"
-                style="width: 110px;"
-              >
-                <template #append>元</template>
-              </el-input>
-            </el-form-item>
-          </span>
-          <el-form-item
-            v-show="formData.couponCategory===2"
-            label="现金金额:"
-            prop="cash"
+            label="已使用数量:"
+            prop="usedCount"
             style="width: 40%;"
           >
             <el-input
-              v-model.number="formData.cash"
-              :clearable="true"
-              placeholder="请输入现金金额"
+              v-model.number="formData.usedCount"
+              disabled
             />
           </el-form-item>
-          <el-form-item
-            v-show="formData.couponCategory===3"
-            label="折扣(百分制):"
-            prop="discount"
-            style="width: 50%;"
+        </div>
+        <el-form-item
+          label="优惠券类型:"
+          prop="couponCategory"
+          style="width: 40%;"
+        >
+          <el-select
+            v-model.number="formData.couponCategory"
+            placeholder="请选择"
           >
-            <el-input
-              v-model.number="formData.discount"
-              :clearable="true"
-              placeholder="请输入折扣"
-            >
-              <template #append>如: 八折=>80</template>
-            </el-input>
-          </el-form-item>
-          <el-form-item
-            label="兑换上限:"
-            prop="redeemCount"
-            style="width: 40%;"
-          >
-            <el-input
-              v-model.number="formData.redeemCount"
-              :clearable="true"
-              placeholder="请输入每个用户可兑换数量"
-            >
-              <template #append>张</template>
-            </el-input>
-          </el-form-item>
-          <el-form-item
-            label="兑换所需积分:"
-            prop="redeemPoints"
-            style="width: 40%;"
-          >
-            <el-input
-              v-model.number="formData.redeemPoints"
-              :clearable="true"
-              placeholder="请输入兑换所需积分"
+            <el-option
+              key="fullMinus"
+              label="满减券"
+              :value="1"
             />
+            <el-option
+              key="cash"
+              label="现金券"
+              :value="2"
+            />
+            <el-option
+              key="discount"
+              label="折扣券"
+              :value="3"
+            />
+          </el-select>
+        </el-form-item>
+        <span v-show="formData.couponCategory===1">
+          <el-form-item
+            label="满"
+            prop="fullMoney"
+          >
+            <el-input
+              v-model.number="formData.fullMoney"
+              placeholder="满"
+              style="width: 110px;"
+            >
+              <template #append>元</template>
+            </el-input>
           </el-form-item>
           <el-form-item
-            label="兑换开始时间:"
-            prop="redeemStartTime"
+            label="减"
+            prop="minusMoney"
+            label-width="0px"
+          >
+            <el-input
+              v-model.number="formData.minusMoney"
+              placeholder="减"
+              style="width: 110px;"
+            >
+              <template #append>元</template>
+            </el-input>
+          </el-form-item>
+        </span>
+        <el-form-item
+          v-show="formData.couponCategory===2"
+          label="现金金额:"
+          prop="cash"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model.number="formData.cash"
+            :clearable="true"
+            placeholder="请输入现金金额"
+          />
+        </el-form-item>
+        <el-form-item
+          v-show="formData.couponCategory===3"
+          label="折扣(百分制):"
+          prop="discount"
+          style="width: 50%;"
+        >
+          <el-input
+            v-model.number="formData.discount"
+            :clearable="true"
+            placeholder="请输入折扣"
+          >
+            <template #append>如: 八折=>80</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="兑换上限:"
+          prop="redeemCount"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model.number="formData.redeemCount"
+            :clearable="true"
+            placeholder="请输入每个用户可兑换数量"
+          >
+            <template #append>张</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="兑换所需积分:"
+          prop="redeemPoints"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model.number="formData.redeemPoints"
+            :clearable="true"
+            placeholder="请输入兑换所需积分"
+          />
+        </el-form-item>
+        <el-form-item
+          label="兑换开始时间:"
+          prop="redeemStartTime"
+          style="width: 40%;"
+        >
+          <el-date-picker
+            v-model="formData.redeemStartTime"
+            type="date"
+            placeholder="选择日期"
+            :clearable="true"
+          />
+        </el-form-item>
+        <el-form-item
+          label="兑换结束时间:"
+          prop="redeemEndTime"
+          style="width: 40%;"
+        >
+          <el-date-picker
+            v-model="formData.redeemEndTime"
+            type="date"
+            placeholder="选择日期"
+            :clearable="true"
+          />
+        </el-form-item>
+        <el-form-item
+          label="有效期类型:"
+          prop="expCategory"
+          style="width: 40%;"
+        >
+          <el-select
+            v-model.number="formData.expCategory"
+            placeholder="请选择"
+          >
+            <el-option
+              key="fixed"
+              label="固定日期"
+              :value="1"
+            />
+            <el-option
+              key="valid"
+              label="有效天数"
+              :value="2"
+            />
+          </el-select>
+        </el-form-item>
+        <div v-show="formData.expCategory===1">
+          <el-form-item
+            label="固定开始时间:"
+            prop="fixedStartTime"
             style="width: 40%;"
           >
             <el-date-picker
-              v-model="formData.redeemStartTime"
+              v-model="formData.fixedStartTime"
               type="date"
               placeholder="选择日期"
               :clearable="true"
             />
           </el-form-item>
           <el-form-item
-            label="兑换结束时间:"
-            prop="redeemEndTime"
+            label="固定结束时间:"
+            prop="fixedEndTime"
             style="width: 40%;"
           >
             <el-date-picker
-              v-model="formData.redeemEndTime"
+              v-model="formData.fixedEndTime"
               type="date"
               placeholder="选择日期"
               :clearable="true"
             />
           </el-form-item>
-          <el-form-item
-            label="有效期类型:"
-            prop="expCategory"
-            style="width: 40%;"
-          >
-            <el-select
-              v-model.number="formData.expCategory"
-              placeholder="请选择"
-            >
-              <el-option
-                key="fixed"
-                label="固定日期"
-                :value="1"
-              />
-              <el-option
-                key="valid"
-                label="有效天数"
-                :value="2"
-              />
-            </el-select>
-          </el-form-item>
-          <div v-show="formData.expCategory===1">
-            <el-form-item
-              label="固定开始时间:"
-              prop="fixedStartTime"
-              style="width: 40%;"
-            >
-              <el-date-picker
-                v-model="formData.fixedStartTime"
-                type="date"
-                placeholder="选择日期"
-                :clearable="true"
-              />
-            </el-form-item>
-            <el-form-item
-              label="固定结束时间:"
-              prop="fixedEndTime"
-              style="width: 40%;"
-            >
-              <el-date-picker
-                v-model="formData.fixedEndTime"
-                type="date"
-                placeholder="选择日期"
-                :clearable="true"
-              />
-            </el-form-item>
-          </div>
-          <el-form-item
-            v-show="formData.expCategory===2"
-            label="有效天数:"
-            prop="validDay"
-            style="width: 40%;"
-          >
-            <el-input
-              v-model.number="formData.validDay"
-              :clearable="true"
-              placeholder="请输入有效天数"
-            ><template #append>天</template>
-            </el-input>
-          </el-form-item>
-          <el-form-item
-            label="使用说明:"
-            prop="usageInstructions"
-            style="width: 80%;"
-          >
-            <el-input
-              v-model="formData.usageInstructions"
-              :clearable="true"
-              placeholder="请输入使用说明"
-              :autosize="{minRows:2,maxRows:8}"
-              type="textarea"
-            />
-          </el-form-item>
-        </el-form>
-      </el-scrollbar>
+        </div>
+        <el-form-item
+          v-show="formData.expCategory===2"
+          label="有效天数:"
+          prop="validDay"
+          style="width: 40%;"
+        >
+          <el-input
+            v-model.number="formData.validDay"
+            :clearable="true"
+            placeholder="请输入有效天数"
+          ><template #append>天</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="使用说明:"
+          prop="usageInstructions"
+          style="width: 80%;"
+        >
+          <el-input
+            v-model="formData.usageInstructions"
+            :clearable="true"
+            placeholder="请输入使用说明"
+            :autosize="{minRows:2,maxRows:8}"
+            type="textarea"
+          />
+        </el-form-item>
+      </el-form>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="closeDialog">取 消</el-button>
