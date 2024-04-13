@@ -623,7 +623,7 @@
             style="width: 90%;"
           >
             <el-select
-              v-model="formData.keywords"
+              v-model="keywords"
               multiple
               filterable
               remote
@@ -794,7 +794,7 @@ const formData = ref({
   startHour: 0,
   endHour: 0,
   target: [],
-  keywords: [],
+  keywords: '',
   costCategory: 1,
   buyAmount: 0,
   costImpressions: 0,
@@ -996,6 +996,7 @@ const updateAdFunc = async(row) => {
     } else {
       setLink.value = false
     }
+    keywords.value = JSON.parse(formData.value.keywords)
     dialogFormVisible.value = true
   }
 }
@@ -1049,7 +1050,7 @@ const closeDialog = () => {
     startHour: 0,
     endHour: 0,
     target: [],
-    keywords: [],
+    keywords: '',
     costCategory: 1,
     buyAmount: 0,
     costImpressions: 0,
@@ -1064,6 +1065,7 @@ const enterDialog = async() => {
     if (!valid) return
     let res
     formData.value.advertiserId = advertiserInfo.value.ID
+    formData.value.keywords = JSON.stringify(keywords.value)
     switch (type.value) {
       case 'create':
         formData.value.cost = calCost.value
@@ -1465,6 +1467,9 @@ const calCost = computed(() => {
 function handleAdCategoryChange() {
   formData.value.costCategory = formData.value.adCategory
 }
+
+const keywords = ref([])
+
 </script>
 
 <style>
