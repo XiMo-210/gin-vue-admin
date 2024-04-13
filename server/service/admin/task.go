@@ -36,7 +36,7 @@ func (taskService *TaskService) DeleteTask(ID string) (err error) {
 }
 
 func (taskService *TaskService) DeleteTaskStages(ID string) (err error) {
-	err = global.GVA_DB.Delete(&admin.TaskStage{}, "task_id = ?", ID).Error
+	err = global.GVA_DB.Unscoped().Delete(&admin.TaskStage{}, "task_id = ?", ID).Error
 	return err
 }
 
