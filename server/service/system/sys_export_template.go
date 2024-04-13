@@ -232,7 +232,7 @@ func (sysExportTemplateService *SysExportTemplateService) ImportExcel(templateID
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		excelTitle := rows[0]
 		values := rows[1:]
-		items := make([]map[string]interface{}, len(values))
+		items := make([]map[string]interface{}, 0, len(values))
 		for _, row := range values {
 			var item = make(map[string]interface{})
 			for ii, value := range row {
