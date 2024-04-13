@@ -189,15 +189,17 @@
               link
               class="table-button"
               icon="link"
+              :disabled="scope.row.studentInfoId===0"
               @click="getStudentInfoDetails(scope.row)"
             >
-              关联学生
+              {{ scope.row.studentInfoId===0?"暂未认证":"关联学生" }}
             </el-button>
             <el-button
               type="primary"
               link
               class="table-button"
               icon="PieChart"
+              :disabled="scope.row.studentInfoId===0"
               @click="getUserTaskConditionInfo(scope.row)"
             >
               任务情况
