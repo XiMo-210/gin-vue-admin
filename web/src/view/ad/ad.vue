@@ -1435,7 +1435,7 @@ const calCost = computed(() => {
   if (formData.value.adCategory === 2) {
     per = 30
     for (let i = 0; i < choices.value.length; i++) {
-      if (formData.value.keywords.includes(choices.value[i].option)) {
+      if (keywords.value.includes(choices.value[i].option)) {
         switch (choices.value[i].level) {
           case 1:
             per += 10
