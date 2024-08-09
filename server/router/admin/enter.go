@@ -15,4 +15,7 @@ type RouterGroup struct {
 	AdRouter
 	ReviewRecordsRouter
 	PlatformParamRouter
+	DormitoryBuildingRouter
+	DormRoomRouter
+	QuestionnaireRouter
 }

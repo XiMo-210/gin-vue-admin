@@ -14,7 +14,7 @@ import auth from '@/directive/auth'
 import { store } from '@/pinia'
 import App from './App.vue'
 import { initDom } from './utils/positionToCode'
-import DataV from '@dataview/datav-vue3'
+import * as DataV from '@dataview/datav-vue3'
 
 initDom()
 /**

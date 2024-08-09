@@ -101,6 +101,9 @@ func Routers() *gin.Engine {
 		adminRouter.InitAdRouter(PrivateGroup)
 		adminRouter.InitReviewRecordsRouter(PrivateGroup)
 		adminRouter.InitPlatformParamRouter(PrivateGroup)
+		adminRouter.InitDormitoryBuildingRouter(PrivateGroup)
+		adminRouter.InitDormRoomRouter(PrivateGroup)
+		adminRouter.InitQuestionnaireRouter(PrivateGroup)
 
 	}
 

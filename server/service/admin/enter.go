@@ -15,4 +15,7 @@ type ServiceGroup struct {
 	AdService
 	ReviewRecordsService
 	PlatformParamService
+	DormitoryBuildingService
+	DormRoomService
+	QuestionnaireService
 }

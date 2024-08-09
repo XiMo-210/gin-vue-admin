@@ -4,7 +4,7 @@
 
 const config = {
   appName: 'E启新篇',
-  appLogo: 'https://download.tooc.xlj0.com/Tooc/14/14/logo.png',
+  appLogo: 'https://img.lonesome.cn/temp/logo.png',
   showViteLogo: true,
   logs: [],
 }

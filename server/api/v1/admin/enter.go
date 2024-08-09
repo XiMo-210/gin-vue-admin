@@ -15,4 +15,7 @@ type ApiGroup struct {
 	AdApi
 	ReviewRecordsApi
 	PlatformParamApi
+	DormitoryBuildingApi
+	DormRoomApi
+	QuestionnaireApi
 }
