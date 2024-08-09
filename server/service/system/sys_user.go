@@ -21,6 +21,8 @@ import (
 
 type UserService struct{}
 
+var UserServiceApp = new(UserService)
+
 func (userService *UserService) Register(u system.SysUser) (userInter system.SysUser, err error) {
 	var user system.SysUser
 	if !errors.Is(global.GVA_DB.Where("username = ?", u.Username).First(&user).Error, gorm.ErrRecordNotFound) { // 判断用户名是否注册
@@ -106,7 +108,7 @@ func (userService *UserService) SetUserAuthority(id uint, authorityId uint) (err
 	if errors.Is(assignErr, gorm.ErrRecordNotFound) {
 		return errors.New("该用户无此角色")
 	}
-	err = global.GVA_DB.Where("id = ?", id).First(&system.SysUser{}).Update("authority_id", authorityId).Error
+	err = global.GVA_DB.Model(&system.SysUser{}).Where("id = ?", id).Update("authority_id", authorityId).Error
 	return err
 }
 
@@ -187,7 +189,7 @@ func (userService *UserService) SetUserInfo(req system.SysUser) error {
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
-//@function: SetUserInfo
+//@function: SetSelfInfo
 //@description: 设置用户信息
 //@param: reqUser model.SysUser
 //@return: err error, user model.SysUser
@@ -242,7 +244,7 @@ func (userService *UserService) FindUserByUuid(uuid string) (user *system.SysUse
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
-//@function: resetPassword
+//@function: ResetPassword
 //@description: 修改用户密码
 //@param: ID uint
 //@return: err error

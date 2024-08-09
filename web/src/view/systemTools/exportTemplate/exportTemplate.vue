@@ -119,13 +119,18 @@
         <el-table-column
           align="left"
           label="数据库"
-          prop="name"
           width="120"
         >
-          <template #defalut="scope">
-            <span>{{ scope.row.dbNname || "GVA库" }}</span>
+          <template #default="scope">
+            <span>{{ scope.row.dbName || "GVA库" }}</span>
           </template>
         </el-table-column>
+        <el-table-column
+            align="left"
+            label="模板标识"
+            prop="templateID"
+            width="120"
+        />
         <el-table-column
           align="left"
           label="模板名称"
@@ -136,12 +141,6 @@
           align="left"
           label="表名称"
           prop="tableName"
-          width="120"
-        />
-        <el-table-column
-          align="left"
-          label="模板标识"
-          prop="templateID"
           width="120"
         />
         <el-table-column
@@ -193,7 +192,7 @@
       destroy-on-close
     >
 
-      <template #title>
+      <template #header>
         <div class="flex justify-between items-center">
           <span class="text-lg">{{ type==='create'?'添加':'修改' }}</span>
           <div>
@@ -228,16 +227,17 @@
             </el-tooltip>
           </template>
           <el-select
-            v-model="formData.dbName"
-            clearable
-            placeholder="选择业务库"
+              v-model="formData.dbName"
+              clearable
+              @change="dbNameChange"
+              placeholder="选择业务库"
           >
             <el-option
-              v-for="item in dbList"
-              :key="item.aliasName"
-              :value="item.aliasName"
-              :label="item.aliasName"
-              :disabled="item.disable"
+                v-for="item in dbList"
+                :key="item.aliasName"
+                :value="item.aliasName"
+                :label="item.aliasName"
+                :disabled="item.disable"
             >
               <div>
                 <span>{{ item.aliasName }}</span>
@@ -259,13 +259,34 @@
         </el-form-item>
         <el-form-item
           label="表名称:"
+          clearable
           prop="tableName"
         >
-          <el-input
+<!--          <el-input
             v-model="formData.tableName"
             :clearable="true"
             placeholder="请输入要导出的表名称"
-          />
+          />-->
+          <div
+              class="w-full flex gap-4"
+          >
+            <el-select
+                v-model="formData.tableName"
+                class="flex-1"
+                filterable
+                placeholder="请选择表"
+            >
+              <el-option
+                  v-for="item in tableOptions"
+                  :key="item.tableName"
+                  :label="item.tableName"
+                  :value="item.tableName"
+              />
+            </el-select>
+
+            <el-button type="primary" @click="getColumnFunc">自动生成模板</el-button>
+          </div>
+
         </el-form-item>
         <el-form-item
           label="模板标识:"
@@ -417,20 +438,21 @@ import { formatDate } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 import WarningBar from '@/components/warningBar/warningBar.vue'
-import { getDB } from '@/api/autoCode'
+import {getDB, getTable, getColumn} from '@/api/autoCode'
 
 defineOptions({
   name: 'ExportTemplate'
 })
 
-const templatePlaceholder = `模板信息格式：key标识数据库column列名称（在join模式下需要写为 table.column），value标识导出excel列名称，如下：
+const templatePlaceholder = `模板信息格式：key标识数据库column列名称（在join模式下需要写为 table.column），value标识导出excel列名称，如key为数据库关键字或函数，请按照关键字的处理模式处理，当前以mysql为例，如下：
 {
   "table_column1":"第一列",
-  "table_column2":"第二列",
   "table_column3":"第三列",
   "table_column4":"第四列",
+  "\`rows\`":"我属于数据库关键字或函数",
 }
 如果增加了JOINS导出key应该列为 {table_name1.table_column1:"第一列",table_name2.table_column2:"第二列"}
+如果有重复的列名导出格式应为 {table_name1.table_column1 as key:"第一列",table_name2.table_column2 as key2:"第二列"}
 JOINS模式下不支持导入
 `
 
@@ -438,6 +460,7 @@ JOINS模式下不支持导入
 const formData = ref({
   name: '',
   tableName: '',
+  dbName: '',
   templateID: '',
   templateInfo: '',
   limit: 0,
@@ -566,7 +589,9 @@ const total = ref(0)
 const pageSize = ref(10)
 const tableData = ref([])
 const searchInfo = ref({})
+
 const dbList = ref([])
+const tableOptions = ref([])
 
 const getDbFunc = async() => {
   const res = await getDB()
@@ -576,6 +601,45 @@ const getDbFunc = async() => {
 }
 
 getDbFunc()
+
+const dbNameChange = () => {
+  formData.value.tableName = ''
+  formData.value.templateInfo = ''
+  getTableFunc()
+}
+
+const getTableFunc = async() => {
+  const res = await getTable({ businessDB: formData.value.dbName  })
+  if (res.code === 0) {
+    tableOptions.value = res.data.tables
+  }
+  formData.value.tableName = ''
+}
+getTableFunc()
+
+const getColumnFunc = async () => {
+  if(!formData.value.tableName) {
+    ElMessage({
+      type: 'error',
+      message: '请先选择业务库及选择表后再进行操作'
+    })
+    return
+  }
+  formData.value.templateInfo = ""
+  const res = await getColumn({
+    businessDB: formData.value.dbName,
+    tableName: formData.value.tableName
+  })
+  if(res.code === 0) {
+    // 把返回值的data.columns做尊换，制作一组JSON数据，columnName做key，columnComment做value
+    const templateInfo = {}
+    res.data.columns.forEach(item => {
+      templateInfo[item.columnName] = item.columnComment || item.columnName
+    })
+    formData.value.templateInfo =  JSON.stringify(templateInfo, null, 2)
+  }
+
+}
 
 // 重置
 const onReset = () => {

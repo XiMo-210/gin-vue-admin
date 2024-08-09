@@ -9,12 +9,14 @@ import (
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteSysDictionary
+//@function: CreateSysDictionary
 //@description: 创建字典数据
 //@param: sysDictionary model.SysDictionary
 //@return: err error
 
 type DictionaryService struct{}
+
+var DictionaryServiceApp = new(DictionaryService)
 
 func (dictionaryService *DictionaryService) CreateSysDictionary(sysDictionary system.SysDictionary) (err error) {
 	if (!errors.Is(global.GVA_DB.First(&system.SysDictionary{}, "type = ?", sysDictionary.Type).Error, gorm.ErrRecordNotFound)) {
